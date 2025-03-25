@@ -10,7 +10,7 @@ const db = require('../db/mysql'); // DB pool 사용
 // '/' get 가져와 '/login' 에 rendering (login.ejs 으로)
 router.get('/login', (req, res) => {
   res.render('login', {
-    layout: 'layout',           // (선택) 기본 layout 설정이 되어 있다면 생략 가능
+    // layout: 'layout',           // (선택) 기본 layout 설정이 되어 있다면 생략 가능
     title: 'Sign In',           // layout.ejs의 <title>에 사용 가능
     error: null,                // 에러 메시지 전달
     isAuthenticated: false,     // 로그인 상태 아님 (layout에 조건 분기할 수 있게)
@@ -35,9 +35,12 @@ router.post('/login', (req, res) => {
 
       if (results.length > 0) {
         req.session.user = { name: results[0].username };
-        res.redirect('/dashboard');
+        res.redirect('/dashboard');    // 로그인 성공시 메인 페이지로 이동 : dashboard.ejs로 이동
+
       } else {
-        res.render('login', { error: 'Invalid credentials' });
+        res.redirect('/');        // 로그인 실패시 처음 페이지로
+        //res.redirect('/login'); // 로그인 실패시 로그인 페이지로 이동
+        // res.render('login', { error: 'Invalid credentials' }); // login.ejs 에러 메시지 전달
       }
     }
   );

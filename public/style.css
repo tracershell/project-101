@@ -150,8 +150,9 @@ body {
 }
 
 .login-box .logo {
-  width: 50px;
-  margin-bottom: 20px;
+  width: 200px;
+  height: auto;
+  margin-bottom: 5px;
 }
 
 h2 {

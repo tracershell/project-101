@@ -4,25 +4,29 @@
   <meta charset="UTF-8">
   <title><%= title %> - ARGUS US INC.</title>
   <link rel="stylesheet" href="/style.css">
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
 </head>
 <body>
 
   <!-- Top Bar -->
   <div class="top-bar">
-    2055 E. 51st Street, Vernon, CA 90058 | <a href="#">Read More →</a>
+    2055 E. 51st Street, Vernon, CA 90058&nbsp;&nbsp;&nbsp;&nbsp;| <a href="#">Read More →</a>
   </div>
 
   <!-- Navigation Bar -->
   <nav class="navbar">
     <div class="logo">ARGUS US INC.</div>
+    <!-- login 상태가 아니면 menu 가 보이지 않음 -->
+    <% if (isAuthenticated) { %>
     <div class="menu">
       <a href="/">General</a>
-      <a href="#">Owner</a>
+      <a href="/employee">employee</a>
       <a href="#">Pricing</a>
       <a href="#">Support</a>
       <a href="#">Blog</a>
       <a href="#">Company</a>
     </div>
+    <% } %>
     <div class="auth-buttons">
       <% if (isAuthenticated) { %>
         <span class="btn-welcome">Welcome, <%= name %>!</span>

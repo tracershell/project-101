@@ -17,8 +17,10 @@ const db = require('../db/mysql');
     });
 }); */
 
+// apple2n2.theworkpc.com 을 get 요청
+
 router.get('/', (req, res) => {
-  res.render('index', {
+  res.render('index', {                                       // index.ejs 로 렌더링
     layout: 'layout',
     title: 'Home',
     isAuthenticated: !!req.session.user,
@@ -44,7 +46,7 @@ router.get('/dashboard', (req, res) => {
   }
 
   res.render('dashboard', {
-    layout: 'layout',
+    layout: 'layout', // (선택) 기본 layout 설정이 되어 있다면 생략 가능
     title: 'Dashboard',
     name: req.session.user.name,
     isAuthenticated: true,
@@ -52,5 +54,91 @@ router.get('/dashboard', (req, res) => {
   });
 });
 
+// employee
+router.get('/employee', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  db.query('SELECT * FROM employee', (err, results) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).send('DB error');
+    }
+    res.render('employee', { employees: results });
+  });
+});
+
+
+// employee add
+ router.post('/add', (req, res) => {
+   if (!req.session.user) {
+     return res.redirect('/login');
+   }
+   const { name, email, phone } = req.body;
+   db.query(
+     'INSERT INTO employee (name, email, phone) VALUES (?, ?, ?)',  // INSERT 쿼리 실행
+     [name, email, phone],
+     (err, results) => {   // 쿼리 실행 결과 처리
+       if (err) {
+         console.error(err);
+         return res.status(500).send('DB error');
+       }
+       res.redirect('/employee');  // 추가 후 employee 목록으로 리다이렉트
+     }
+   );
+ });        
+
+
+// employee modify
+// router.post('/edit/:id', (req, res) => {
+//   if (!req.session.user) {
+//     return res.redirect('/login');
+//   }
+//   const { id } = req.params;
+//   const { name, email, phone } = req.body;
+//   db.query(  // UPDATE 쿼리 실행
+//     'UPDATE employee SET name = ?, email = ?, phone = ? WHERE id = ?',       // employee 테이블에서 id 값이 일치하는 레코드의 name, email, phone 값을 수정
+//     [name, email, phone, id],
+//     (err, results) => {      // 쿼리 실행 결과 처리
+//       if (err) {
+//         console.error(err);
+//         return res.status(500).send('DB error');
+//       }
+//       res.redirect('/employee');    // 수정 후 employee 목록으로 리다이렉트
+//     }
+//   );
+// });        
+
+// employee delete
+// router.get('/delete/:id', (req, res) => {
+//   if (!req.session.user) {
+//     return res.redirect('/login');
+//   }
+//   const { id } = req.params;
+//   db.query(
+//     'DELETE FROM employee WHERE id = ?',  // DELETE 쿼리 실행
+//     [id],
+//     (err, results) => {   // 쿼리 실행 결과 처리
+//       if (err) {
+//         console.error(err);
+//         return res.status(500).send('DB error');
+//       }
+//       res.redirect('/employee');  // 삭제 후 employee 목록으로 리다이렉트
+//     }
+//   );
+// });    
+
+
+// employee search
+// router.get('/employee/search', (req, res) => {               // search.ejs 파일을 렌더링                
+
+
+
+
+
+
+
+// 
 
 module.exports = router;

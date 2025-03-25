@@ -1,0 +1,73 @@
+<section class="hero">
+    <h1>Welcome, <%= name %>!</h1>
+    <p>You’re now logged in.</p>
+    <a href="/logout" class="btn-signin">Log out</a>
+  </section>
+  
+  <div class="container">
+    <div class="main-layout">
+  
+      <!-- Left Input Section -->
+      <div class="input-section">
+        <h2>Employee Information</h2>
+        <form action="/add" method="post" class="form">
+          <input type="text" name="id_no" placeholder="ID No" required />
+          <input type="text" name="name" placeholder="Name" required />
+          <input type="date" name="birthday" placeholder="Birthday" />
+          <input type="text" name="ss_no" placeholder="SS No" />
+          <input type="email" name="email" placeholder="Email" />
+          <input type="text" name="department" placeholder="Department" />
+          <input type="text" name="job" placeholder="Job Title" />
+          <input type="date" name="start_date" placeholder="Start Date" />
+          <input type="date" name="end_date" placeholder="End Date" />
+          <input type="text" name="address" placeholder="Address" />
+          <input type="text" name="city" placeholder="City" />
+          <input type="text" name="state" placeholder="State" />
+          <input type="text" name="zip" placeholder="Zip Code" />
+          <textarea name="remark" placeholder="Remark"></textarea>
+  
+          <div class="form-buttons">
+            <button type="submit" title="Add">➕</button>
+            <button formaction="/edit/<%= editId || '' %>" title="Edit">✏️</button>
+            <button formaction="/delete/<%= deleteId || '' %>" title="Delete">🗑️</button>
+            <button type="reset" title="Clear">📄</button>
+          </div>
+        </form>
+      </div>
+  
+      <!-- Right Table Section -->
+      <div class="table-section">
+        <div class="table-header">
+          <h2>Employee List</h2>
+          <button onclick="window.print()">🖨️ Print</button>
+        </div>
+  
+        <table id="employeeTable">
+          <thead>
+            <tr>
+              <th onclick="sortTable(0)">Name</th>
+              <th onclick="sortTable(1)">Department</th>
+              <th onclick="sortTable(2)">Start Date</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% employees.forEach(emp => { %>
+              <tr>
+                <td><%= emp.name %></td>
+                <td><%= emp.department %></td>
+                <td><%= emp.start_date %></td>
+                <td>
+                  <a href="/edit/<%= emp.id %>">✏️</a>
+                  <a href="/delete/<%= emp.id %>">🗑️</a>
+                </td>
+              </tr>
+            <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <script src="/js/employee.js"></script>
+  
