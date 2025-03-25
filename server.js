@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const path = require('path');
 const session = require('express-session');
+const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 
@@ -18,14 +19,18 @@ app.use(session({
   secret: process.env.SESSION_SECRET || 'defaultSecret',
   resave: false,
   saveUninitialized: false
-//  cookie: {
-//    maxAge: 1000 * 60 * 60  // 1시간 (밀리초 단위)
-//  }
+  //  cookie: {
+  //    maxAge: 1000 * 60 * 60  // 1시간 (밀리초 단위)
+  //  }
 }));
 
 // EJS 뷰 설정
 app.set('view engine', 'ejs');                      // view 엔진 : 확장자 ejs
 app.set('views', path.join(__dirname, 'views'));    // views 가 있는 곳: 현재 실행중인(server.js) 디렉토리/views ==> 경로만 지정하는 역할
+
+app.use(expressLayouts);                             // 레이아웃 사용
+app.set('layout', 'layout');                         // 기본 레이아웃: layout.ejs
+
 
 // 정적 파일 제공
 app.use(express.static(path.join(__dirname, 'public')));  // 정적파일 [현재 실행중인(server.js)디렉토리/public]

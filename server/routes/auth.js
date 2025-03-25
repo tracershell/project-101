@@ -9,9 +9,15 @@ const db = require('../db/mysql'); // DB pool 사용
 // 로그인 페이지 렌더링
 // '/' get 가져와 '/login' 에 rendering (login.ejs 으로)
 router.get('/login', (req, res) => {
-  res.render('login', { error: null });
+  res.render('login', {
+    layout: 'layout',           // (선택) 기본 layout 설정이 되어 있다면 생략 가능
+    title: 'Sign In',           // layout.ejs의 <title>에 사용 가능
+    error: null,                // 에러 메시지 전달
+    isAuthenticated: false,     // 로그인 상태 아님 (layout에 조건 분기할 수 있게)
+    name: null,                 // 사용자 이름 없음
+    now: new Date().toString()  // (선택) footer 시간 표시 등
+  });
 });
-
 
 
 // post 받아와 '/login' 으로 부터 아래 내용 처리리 (<a href="/login" class="btn-signin">Sign In</a>     

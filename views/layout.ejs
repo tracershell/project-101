@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %> - ARGUS US INC.</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    2055 E. 51st Street, Vernon, CA 90058 | <a href="#">Read More →</a>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">ARGUS US INC.</div>
+    <div class="menu">
+      <a href="/">General</a>
+      <a href="#">Owner</a>
+      <a href="#">Pricing</a>
+      <a href="#">Support</a>
+      <a href="#">Blog</a>
+      <a href="#">Company</a>
+    </div>
+    <div class="auth-buttons">
+      <% if (isAuthenticated) { %>
+        <span class="btn-welcome">Welcome, <%= name %>!</span>
+        <a href="/logout" class="btn-signin">Log out</a>
+      <% } else { %>
+        <a href="/login" class="btn-signin">Sign In</a>
+        <button class="btn-get-started">Get Started</button>
+      <% } %>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <%- body %>
+  </main>
+
+  <!-- Footer: 로그인 상태가 아니면 보여줌 -->
+  <% if (!isAuthenticated) { %>
+    <footer class="footer">
+      <p>Current server time: <%= now %></p>
+    </footer>
+  <% } %>
+
+</body>
+</html>
