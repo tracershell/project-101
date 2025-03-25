@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Project 101 - Docker Style</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    2055 E. 51st Street, Vernon, CA 90058     |<a href="#">Read More →</a>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">ARGUS US INC.</div>
+    <div class="menu">
+      <a href="#">General</a>
+      <a href="#">Owner</a>
+      <a href="#">Pricing</a>
+      <a href="#">Support</a>
+      <a href="#">Blog</a>
+      <a href="#">Company</a>
+    </div>
+    <div class="auth-buttons">
+      <!-- ✅ 수정: a 링크로 Sign In 처리 -->
+      <a href="/login" class="btn-signin">Sign In</a>      <!--  click 하면 route.get('/login') 에서 처리하도록 보낸다 -->
+      <button class="btn-get-started">Get Started</button>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <h1>A robust platform for enhanced development</h1>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <p>Current server time: <%= now %></p>
+  </footer>
+
+  <script src="/script.js"></script>
+</body>
+</html>

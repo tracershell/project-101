@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Sign In - ARGUS US INC.</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="login-wrapper">
+    <div class="login-box">
+      <img src="https://www.docker.com/wp-content/uploads/2022/03/Moby-logo.png" alt="Docker Logo" class="logo" />
+      <h2>Sign in</h2>
+      <p class="login-description">
+        Using Docker for work? We recommend signing in with your work email address.
+      </p>
+
+      <% if (error) { %>
+        <div class="login-error"><%= error %></div>
+      <% } %>
+
+      <form method="POST" action="/login">
+        <input type="text" id="username" name="username" placeholder="Username or email address" required class="input-field" />
+        <input type="password" id="password" name="password" placeholder="Password" required class="input-field" />
+        <button type="submit" class="btn-primary">Continue</button>
+      </form>
+
+      <div class="login-divider">OR</div>
+
+      <div class="social-login">
+        <button class="btn-social google">Continue with Google</button>
+        <button class="btn-social github">Continue with GitHub</button>
+        <button class="btn-social sso">Continue with SSO</button>
+      </div>
+
+      <p class="signup-text">
+        Don't have an account? <a href="/signup">Sign Up</a>
+      </p>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,241 @@
+/* General Reset */
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background-color: #fff;
+  color: #333;
+  padding-bottom: 60px;
+}
+
+/* Top Notification Bar */
+.top-bar {
+  background-color: #001c48;
+  color: white;
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.top-bar a {
+  color: #00aaff;
+  text-decoration: none;
+}
+
+/* Navigation Bar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 24px;
+  background-color: #ffffff;
+  border-bottom: 1px solid #ddd;
+}
+
+.navbar .logo {
+  font-size: 20px;
+  font-weight: bold;
+  color: #066da5;
+  margin: 0;
+  /* 여백 제거 */
+  padding: 0;
+  /* 여백 제거 */
+  line-height: 1.2;
+  /* 높이 줄임 */
+}
+
+.navbar .menu {
+  display: flex;
+  gap: 20px;
+}
+
+.navbar .menu a {
+  text-decoration: none;
+  color: #333;
+  font-size: 16px;
+  position: relative;
+}
+
+.navbar .auth-buttons {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.auth-buttons .btn-signin {
+  display: inline-block;
+  padding: 8px 16px;
+  background-color: white;
+  border: 1px solid #066da5;
+  color: #066da5;
+  border-radius: 4px;
+  font-size: 14px;
+  text-decoration: none;
+  font-weight: bold;
+  transition: background-color 0.3s ease;
+}
+
+.auth-buttons .btn-signin:hover {
+  background-color: #e6f3fb;
+}
+
+.auth-buttons .btn-get-started {
+  padding: 8px 16px;
+  background-color: #066da5;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.auth-buttons .btn-get-started:hover {
+  background-color: #055c8a;
+}
+
+/* Hero Section */
+.hero {
+  padding: 60px 32px;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 32px;
+  margin-bottom: 20px;
+}
+
+/* Footer (fixed bottom) */
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 3px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #666;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+}
+
+/* ──────────────── */
+/* 로그인 전용 스타일 - Docker 스타일 기반 */
+/* ──────────────── */
+
+/* Modern login page styles */
+
+body {
+  background-color: #f5f7fa;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.login-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+
+.login-box {
+  background: #ffffff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.login-box .logo {
+  width: 50px;
+  margin-bottom: 20px;
+}
+
+h2 {
+  margin-bottom: 10px;
+  font-size: 24px;
+  color: #333;
+}
+
+.login-description {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.login-error {
+  background-color: #ffe5e5;
+  color: #d60000;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 15px;
+}
+
+.input-field {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background-color: #1677ff;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: #145bd6;
+}
+
+.login-divider {
+  margin: 20px 0;
+  color: #aaa;
+  font-size: 13px;
+}
+
+.social-login .btn-social {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  background-color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.social-login .google:hover {
+  background-color: #f7f7f7;
+}
+
+.social-login .github:hover {
+  background-color: #f1f1f1;
+}
+
+.social-login .sso:hover {
+  background-color: #f3f3f3;
+}
+
+.signup-text {
+  margin-top: 20px;
+  font-size: 13px;
+  color: #555;
+}
+
+.signup-text a {
+  color: #1677ff;
+  text-decoration: none;
+}
