@@ -222,6 +222,42 @@ router.post('/edit/:eid', (req, res) => {
   });
 });
 
+// employee 삭제 라우터
+router.post('/delete/:eid', (req, res) => {
+  // 로그인 체크
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  const eidParam = req.params.eid;
+
+  // 삭제 쿼리
+  const deleteQuery = 'DELETE FROM employees WHERE eid = ?';
+
+  db.query(deleteQuery, [eidParam], (err, result) => {
+    if (err) {
+      console.error('직원 삭제 오류:', err);
+      return res.status(500).send('직원 삭제 중 오류가 발생했습니다.');
+    }
+
+    if (result.affectedRows === 0) {
+      return res.send(`
+        <script>
+          alert("삭제할 직원 정보를 찾을 수 없습니다: ${eidParam}");
+          history.back();
+        </script>
+      `);
+    }
+
+    // 삭제 성공 시 알림 후 목록으로 이동
+    return res.send(`
+      <script>
+        alert("직원 정보가 삭제되었습니다: ${eidParam}");
+        window.location.href = "/employees";
+      </script>
+    `);
+  });
+});
 
 
 // 
