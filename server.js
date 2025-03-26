@@ -20,6 +20,8 @@ app.use(session({
 // 라우터 등록
 const authRoutes = require('./server/routes/auth');   // ./server/routes/auth.js 속에서  route.get, route.post, route.delete 를 주고 받을 수 있게
 const indexRoutes = require('./server/routes/index'); // ./server/routes/index.js 를 를 route.get, route.post, route.delete 를 주고 받을 수 있게
+const paylistRoutes = require('./server/routes/paylist');
+app.use('/', paylistRoutes);
 
 // 미들웨어 설정
 app.use(express.urlencoded({ extended: true }));

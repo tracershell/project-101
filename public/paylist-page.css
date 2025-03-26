@@ -1,0 +1,84 @@
+
+body.payroll-page {
+    font-family: Arial, sans-serif;
+    background-color: #f3f7fb;
+    margin: 0;
+    padding: 1rem;
+    font-size: 14px;
+  }
+  
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 1rem;
+    background: white;
+    box-shadow: 0 0 8px rgba(0,0,0,0.1);
+    border-radius: 10px;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 1rem;
+    font-size: 1.4rem;
+  }
+  
+  form.payroll-form {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  form.payroll-form input,
+  form.payroll-form select {
+    padding: 6px 10px;
+    font-size: 0.95rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  .row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+  }
+  
+  .row.full-width {
+    grid-column: span 4;
+  }
+  
+  button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.95rem;
+  }
+  
+  button:hover {
+    background-color: #2980b9;
+  }
+  
+  .summary-row {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 1rem;
+    font-weight: bold;
+  }
+  
+  button.view-btn, button.print-btn {
+    background-color: #2ecc71;
+  }
+  
+  button.view-btn:hover, button.print-btn:hover {
+    background-color: #27ae60;
+  }
+  
+  .remark-row {
+    grid-column: span 4;
+  }
+  

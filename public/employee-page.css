@@ -1,0 +1,75 @@
+/* employee-page 전용 스타일 */
+
+.employee-page table th,
+.employee-page table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 0.3rem;
+  border: 1px solid #ccc;
+}
+
+.employee-page table th.id-col,
+.employee-page table td.id-col {
+  width: 5%;
+}
+
+.employee-page table th.name-col,
+.employee-page table td.name-col {
+  width: 12%;
+}
+
+.employee-page table th.date-col,
+.employee-page table td.date-col {
+  width: 6%;
+}
+
+.employee-page table th.email-col,
+.employee-page table td.email-col {
+  width: 15%;
+}
+
+.employee-page table th.address-col,
+.employee-page table td.address-col {
+  width: 15%;
+}
+
+.employee-page .compact-table {
+  font-size: 12px;
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.employee-page thead th {
+  background-color: #f9f9f9;
+  cursor: pointer;
+}
+
+.employee-page .top-section {
+  flex: 1 1 70%;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.employee-page .bottom-section {
+  flex: 0 0 20% !important;
+  background: #f0f0f0;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  overflow-y: auto;
+  font-size: 12px;
+}
+
+.employee-page .form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.employee-page .form input,
+.employee-page .form textarea,
+.employee-page .form button {
+  font-size: 11px;
+  padding: 0.3rem;
+  box-sizing: border-box;
+}

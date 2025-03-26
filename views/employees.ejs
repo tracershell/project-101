@@ -1,54 +1,20 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>Employee Management</title>
   <link rel="stylesheet" href="/style.css">
-  <style>
-    .employee-page table th,
-    .employee-page table td {
-      text-align: center;
-      vertical-align: middle;
-    }
-
-    .employee-page table th.id-col,
-    .employee-page table td.id-col {
-      width: 5%;
-    }
-
-    .employee-page table th.name-col,
-    .employee-page table td.name-col {
-      width: 12%;
-    }
-
-    .employee-page table th.date-col,
-    .employee-page table td.date-col {
-      width: 6%;
-    }
-
-    .employee-page table th.email-col,
-    .employee-page table td.email-col {
-      width: 15%;
-    }
-
-    .employee-page table th.address-col,
-    .employee-page table td.address-col {
-      width: 15%;
-    }
-  </style>
+  <link rel="stylesheet" href="/employee-page.css">
 </head>
 <body class="employee-page">
   <div class="top-section">
-    
-    <!-- 추가된 Employee 전체 PDF 보기/출력 버튼 -->
     <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h2>Employee List</h2>
       <div>
         <button onclick="window.open('/employees/pdf-view', '_blank')">📄 View PDF</button>
         <button onclick="window.open('/employees/pdf-print', '_blank')">🖨️ Print PDF</button>
       </div>
-      
-  </div>
+    </div>
 
     <table id="employeeTable" class="compact-table">
       <thead>

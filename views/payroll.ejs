@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payroll Management</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/payroll-page.css">
+  <style>
+    .container {
+      margin: 0 20px;
+    }
+    .form-group {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 20px;
+    }
+    .form-group select {
+      min-width: 200px;
+    }
+    .reference-btn {
+      margin-left: 0.5rem;
+    }
+    .check-row {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+    .check-row input[type="text"] {
+      max-width: 150px;
+      flex-shrink: 1;
+    }
+    .payroll-table input[type="text"],
+    .payroll-table input[type="number"] {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .payroll-table {
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      margin-bottom: 20px;
+    }
+    .payroll-form {
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .row {
+      margin-bottom: 20px;
+    }
+    .summary-row {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+      margin-bottom: 20px;
+    }
+    .remark-inline {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 20px;
+    }
+    .remark-inline input {
+      flex: 1;
+    }
+  </style>
+</head>
+<body class="payroll-page">
+  <h2>Pay List</h2>
+  <div class="container">
+    <form id="payrollForm" action="/paylist/add" method="post" class="payroll-form">
+      <div class="row">
+        <div class="form-group">
+          <label for="name">Name :</label>
+          <select id="ep_ref" name="name">
+            <option value="">-- Select Employee --</option>
+            <% employees.forEach(emp => { %>
+              <option value="<%= emp.name %>" data-eid="<%= emp.eid %>" data-jcode="<%= emp.jcode %>" data-jtitle="<%= emp.jtitle %>" data-work1="<%= emp.work1 %>"><%= emp.name %></option>
+            <% }) %>
+          </select>
+          <button type="button" onclick="setReference()" class="reference-btn">Reference</button>
+        </div>
+      </div>
+
+      <div class="row">
+        <label for="pdate">Pay Date :</label>
+        <input type="date" name="pdate" id="pdate">
+      </div>
+
+      <table class="payroll-table">
+        <thead>
+          <tr>
+            <th rowspan="2">Check No.</th>
+            <th colspan="3">Time</th>
+            <th colspan="3">FIT / FICA</th>
+            <th colspan="4">SWT / SDI</th>
+          </tr>
+          <tr>
+            <th>R.T</th>
+            <th>O.T</th>
+            <th>D.T</th>
+            <th>FW</th>
+            <th>SSE</th>
+            <th>ME</th>
+            <th>CA-W</th>
+            <th>CA-de</th>
+            <th>D1</th>
+            <th>D2</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="text" name="ckno_table"></td>
+            <td><input type="number" name="rtime" value="0"></td>
+            <td><input type="number" name="otime" value="0"></td>
+            <td><input type="number" name="dtime" value="0"></td>
+            <td><input type="number" name="fw" value="0"></td>
+            <td><input type="number" name="sse" value="0"></td>
+            <td><input type="number" name="me" value="0"></td>
+            <td><input type="number" name="caw" value="0"></td>
+            <td><input type="number" name="cade" value="0"></td>
+            <td><input type="number" name="adv" value="0"></td>
+            <td><input type="number" name="dd" value="0"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="remark-inline">
+        <span>Gross :</span> <span id="grossAmount">000</span>
+        <span>Net :</span> <span id="netAmount">$0.00</span>
+        <label for="remark">Remark :</label>
+        <input type="text" name="remark" id="remark">
+      </div>
+
+      <div class="row full-width">
+        <button type="submit">입력저장</button>
+        <input type="date" name="selectedDate">
+        <button type="button" class="view-btn">보기</button>
+        <button type="button" class="print-btn">출력</button>
+        <button type="button">선택</button>
+        <button type="button">수정</button>
+        <button type="button">삭제</button>
+      </div>
+
+      <div class="check-row">
+        <label for="ckno">Check No. :</label>
+        <input type="text" name="ckno" id="ckno">
+        <button type="button">Search</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function setReference() {
+      const selected = document.querySelector('#ep_ref');
+      const eid = selected.options[selected.selectedIndex].getAttribute('data-eid');
+      document.getElementById('eid')?.value = eid || '';
+    }
+  </script>
+</body>
+</html>
