@@ -1,0 +1,63 @@
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #f5f7fa;
+  padding: 1rem;
+  margin: 0;
+  font-size: 0.8rem; /* 전체 텍스트 크기 축소 */
+  color: #333;
+  zoom: 0.8; /* 전체 요소 80% 크기로 축소 */
+}
+
+.container {
+  max-width: 750px;
+  margin: 0 auto;
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  color: #2c3e50;
+}
+
+.record-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 2rem;
+  font-size: 0.9rem;
+}
+
+.record-table th,
+.record-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #ddd;
+  text-align: left;
+}
+
+.record-table th {
+  background-color: #ecf0f1;
+  color: #2c3e50;
+  width: 30%;
+}
+
+.back-button-container {
+  text-align: center;
+}
+
+.back-button {
+  background-color: #3498db;
+  color: white;
+  text-decoration: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.back-button:hover {
+  background-color: #2980b9;
+}

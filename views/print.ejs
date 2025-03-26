@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title><%= emp.name %> - Employee Information</title>
+  <link rel="stylesheet" href="/style-record.css" />
+</head>
+<body>
+  <div class="container">
+    <h2>Employee Record (EID: <%= emp.eid %>)</h2>
+    <table class="record-table">
+      <tr><th>Name</th><td><%= emp.name %></td></tr>
+      <tr><th>Status</th><td><%= emp.status %></td></tr>
+      <tr><th>S.S Number</th><td><%= emp.ss %></td></tr>
+      <tr><th>Date of Birth</th><td><%= emp.birth?.toISOString().split('T')[0] %></td></tr>
+      <tr><th>Email</th><td><%= emp.email %></td></tr>
+      <tr><th>Phone</th><td><%= emp.phone %></td></tr>
+      <tr><th>Job Code</th><td><%= emp.jcode %></td></tr>
+      <tr><th>Job Title</th><td><%= emp.jtitle %></td></tr>
+      <tr><th>Start Date</th><td><%= emp.sdate?.toISOString().split('T')[0] %></td></tr>
+      <tr><th>End Date</th><td><%= emp.edate?.toISOString().split('T')[0] %></td></tr>
+      <tr><th>Sick Days</th><td><%= emp.sick %></td></tr>
+      <tr><th>Job Type</th><td><%= emp.work1 %></td></tr>
+      <tr><th>Address</th><td><%= emp.address %></td></tr>
+      <tr><th>City</th><td><%= emp.city %></td></tr>
+      <tr><th>State</th><td><%= emp.state %></td></tr>
+      <tr><th>Zip Code</th><td><%= emp.zip %></td></tr>
+      <tr><th>Remark</th><td><%= emp.remark %></td></tr>
+    </table>
+  </div>
+</body>
+</html>
+
+<!-- 화면 열리자 마자 자동으로 인쇄 대화창 나오게 하기 -->
+<script>
+  window.onload = () => {
+    window.print();
+
+    // 인쇄가 끝난 후 창을 자동으로 닫기 위해 사용
+    window.onafterprint = () => {
+      window.close();
+    };
+  };
+</script>

@@ -138,7 +138,9 @@
       <button type="button" onclick="selectEmployee()">🔍 선택</button>
       <button type="submit" title="Edit" onclick="prepareEdit(event)">✏️ 수정</button>
       <form action="/delete/<%= deleteId || '' %>" method="post" style="display: inline;"><button type="button" title="Delete" onclick="prepareDelete()">🗑️ 삭제</button></form>
-      <button onclick="window.print()" title="Print">📄 출력</button>
+      <button onclick="window.print()" title="Print">📄 화면출력</button>
+      <button type="button" title="View Record" onclick="viewEmployee()">📋 보기</button>
+      <button type="button" title="Print Record" onclick="printEmployee()">📋 출력</button>
     </div>
   </div>
   
@@ -211,6 +213,36 @@
       console.error('삭제 요청 실패:', error);
       alert('직원 삭제 중 오류가 발생했습니다.');
     });
+  }
+
+  // employee print 관련
+  function printRecord() {
+    const eid = document.querySelector('input[name="eid"]').value.trim();
+    if (!eid) {
+      alert("출력할 직원의 EID를 입력 또는 선택해주세요.");
+      return;
+    }
+    window.open(`/print/${eid}`, '_blank');
+  }
+
+    // 선택된 직원 보기
+    function viewEmployee() {
+    const eid = document.querySelector('input[name="eid"]').value.trim();
+    if (!eid) {
+      alert("출력할 직원의 EID를 먼저 입력하거나 선택해주세요.");
+      return;
+    }
+    window.open(`/view-one/${eid}`, '_blank');
+  }
+
+  // 선택된 직원 출력
+  function printEmployee() {
+    const eid = document.querySelector('input[name="eid"]').value.trim();
+    if (!eid) {
+      alert("출력할 직원의 EID를 먼저 입력하거나 선택해주세요.");
+      return;
+    }
+    window.open(`/print/${eid}`, '_blank');
   }
 
 

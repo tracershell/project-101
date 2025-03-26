@@ -260,6 +260,73 @@ router.post('/delete/:eid', (req, res) => {
 });
 
 
+// employee 레코드 보기 라우터
+router.get('/view-one/:eid', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  const eid = req.params.eid;
+
+  const query = 'SELECT * FROM employees WHERE eid = ?';
+  db.query(query, [eid], (err, results) => {
+    if (err) {
+      console.error('레코드 출력 중 DB 오류:', err);
+      return res.status(500).send('DB 오류가 발생했습니다.');
+    }
+
+    if (results.length === 0) {
+      return res.send(`
+        <script>
+          alert("해당 EID의 직원 정보를 찾을 수 없습니다: ${eid}");
+          window.close();
+        </script>
+      `);
+    }
+
+    const emp = results[0];
+    res.render('view-one', {              // view-one.ejs 렌더링
+      layout: false,
+      title: `Employee Record: ${emp.name}`,
+      emp,
+    });
+  });
+});
+
+
+// employee 레코드 출력 라우터
+router.get('/print/:eid', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+
+  const eid = req.params.eid;
+
+  const query = 'SELECT * FROM employees WHERE eid = ?';
+  db.query(query, [eid], (err, results) => {
+    if (err) {
+      console.error('레코드 출력 중 DB 오류:', err);
+      return res.status(500).send('DB 오류가 발생했습니다.');
+    }
+
+    if (results.length === 0) {
+      return res.send(`
+        <script>
+          alert("해당 EID의 직원 정보를 찾을 수 없습니다: ${eid}");
+          window.close();
+        </script>
+      `);
+    }
+
+    const emp = results[0];
+    res.render('print', {
+      layout: false,
+      title: `Employee Record: ${emp.name}`,
+      emp,
+    });
+  });
+});
+
 // 
 
 module.exports = router;
