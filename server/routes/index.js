@@ -60,14 +60,39 @@ router.get('/employee', (req, res) => {
     return res.redirect('/login');
   }
 
-  db.query('SELECT * FROM employee', (err, results) => {
+  // employee 테이블에서 모든 레코드를 가져와서 employees.ejs로 렌더링하기 위한 result 목록 배열 추출
+    db.query('SELECT * FROM employee', (err, results) => {
     if (err) {
-      console.error(err);
-      return res.status(500).send('DB error');
+      console.error('DB 오류:', err);               // DB 오류 발생시 콘솔에 오류 메시지 출력             
+      return res.status(500).send('Database error');  // DB 오류 발생시 500 에러 메시지 전송
     }
-    res.render('employee', { employees: results });
+
+  res.render('employee', {
+    layout: 'layout', // (선택) 기본 layout 설정이 되어 있다면 생략 가능
+    title: 'employee',
+    editId: 'none',
+    deleteId: '',
+    employees: results,  // 직원 목록 배열 전달 employees.ejs로
+    name: req.session.user.name || 'Guest',
+    isAuthenticated: true,
+    now: new Date().toString(),
   });
+
 });
+
+});
+
+//   res.render('employee', { layout: 'layout' });
+//
+//  db.query('SELECT * FROM employee', (err, results) => {
+//    if (err) {
+//      console.error(err);
+//      return res.status(500).send('DB error');
+//    }
+//    res.render('employee', { employees: results });
+//  });
+
+//
 
 
 // employee add

@@ -1,73 +1,122 @@
-<section class="hero">
-    <h1>Welcome, <%= name %>!</h1>
-    <p>You’re now logged in.</p>
-    <a href="/logout" class="btn-signin">Log out</a>
-  </section>
-  
-  <div class="container">
-    <div class="main-layout">
-  
-      <!-- Left Input Section -->
-      <div class="input-section">
-        <h2>Employee Information</h2>
-        <form action="/add" method="post" class="form">
-          <input type="text" name="id_no" placeholder="ID No" required />
-          <input type="text" name="name" placeholder="Name" required />
-          <input type="date" name="birthday" placeholder="Birthday" />
-          <input type="text" name="ss_no" placeholder="SS No" />
-          <input type="email" name="email" placeholder="Email" />
-          <input type="text" name="department" placeholder="Department" />
-          <input type="text" name="job" placeholder="Job Title" />
-          <input type="date" name="start_date" placeholder="Start Date" />
-          <input type="date" name="end_date" placeholder="End Date" />
-          <input type="text" name="address" placeholder="Address" />
-          <input type="text" name="city" placeholder="City" />
-          <input type="text" name="state" placeholder="State" />
-          <input type="text" name="zip" placeholder="Zip Code" />
-          <textarea name="remark" placeholder="Remark"></textarea>
-  
-          <div class="form-buttons">
-            <button type="submit" title="Add">➕</button>
-            <button formaction="/edit/<%= editId || '' %>" title="Edit">✏️</button>
-            <button formaction="/delete/<%= deleteId || '' %>" title="Delete">🗑️</button>
-            <button type="reset" title="Clear">📄</button>
-          </div>
-        </form>
-      </div>
-  
-      <!-- Right Table Section -->
-      <div class="table-section">
-        <div class="table-header">
-          <h2>Employee List</h2>
-          <button onclick="window.print()">🖨️ Print</button>
-        </div>
-  
-        <table id="employeeTable">
-          <thead>
-            <tr>
-              <th onclick="sortTable(0)">Name</th>
-              <th onclick="sortTable(1)">Department</th>
-              <th onclick="sortTable(2)">Start Date</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            <% employees.forEach(emp => { %>
-              <tr>
-                <td><%= emp.name %></td>
-                <td><%= emp.department %></td>
-                <td><%= emp.start_date %></td>
-                <td>
-                  <a href="/edit/<%= emp.id %>">✏️</a>
-                  <a href="/delete/<%= emp.id %>">🗑️</a>
-                </td>
-              </tr>
-            <% }) %>
-          </tbody>
-        </table>
-      </div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee Management</title>
+  <link rel="stylesheet" href="/style.css">
+  <style>
+    .employee-page table th,
+    .employee-page table td {
+      text-align: center;
+      vertical-align: middle;
+    }
+
+    .employee-page table th.id-col,
+    .employee-page table td.id-col {
+      width: 5%;
+    }
+
+    .employee-page table th.name-col,
+    .employee-page table td.name-col {
+      width: 12%;
+    }
+
+    .employee-page table th.date-col,
+    .employee-page table td.date-col {
+      width: 6%;
+    }
+
+    .employee-page table th.email-col,
+    .employee-page table td.email-col {
+      width: 15%;
+    }
+
+    .employee-page table th.address-col,
+    .employee-page table td.address-col {
+      width: 15%;
+    }
+  </style>
+</head>
+<body class="employee-page">
+  <div class="top-section">
+    <div class="table-header">
+      <h2>Employee List</h2>
+      <button onclick="window.print()">🖨️ Print</button>
     </div>
+
+    <table id="employeeTable" class="compact-table">
+      <thead>
+        <tr>
+          <th class="id-col">ID</th>
+          <th class="name-col">Name</th>
+          <th class="date-col">Birthday</th>
+          <th>SS No</th>
+          <th class="email-col">Email</th>
+          <th>Department</th>
+          <th>Job</th>
+          <th class="date-col">Start</th>
+          <th class="date-col">End</th>
+          <th class="address-col">Address</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (employees && employees.length > 0) { %>
+          <% employees.forEach(emp => { %>
+            <tr>
+              <td class="id-col"><%= emp.id_no %></td>
+              <td class="name-col"><%= emp.name %></td>
+              <td class="date-col"><%= emp.birthday ? new Date(emp.birthday).toLocaleDateString('en-US') : '' %></td>
+              <td><%= emp.ss_no || '' %></td>
+              <td class="email-col"><%= emp.email || '' %></td>
+              <td><%= emp.department || '' %></td>
+              <td><%= emp.job || '' %></td>
+              <td class="date-col"><%= emp.start_date ? new Date(emp.start_date).toLocaleDateString('en-US') : '' %></td>
+              <td class="date-col"><%= emp.end_date ? new Date(emp.end_date).toLocaleDateString('en-US') : '' %></td>
+              <td class="address-col"><%= emp.address || '' %></td>
+              <td><%= emp.city || '' %></td>
+              <td><%= emp.state || '' %></td>
+              <td><%= emp.zip || '' %></td>
+              <td><%= emp.remark || '' %></td>
+            </tr>
+          <% }) %>
+        <% } else { %>
+          <tr><td colspan="14">직원 정보가 없습니다.</td></tr>
+        <% } %>
+      </tbody>
+    </table>
   </div>
-  
+
+  <div class="bottom-section compact-form">
+    <h3>Search / Add / Edit / Delete Employee</h3>
+    <form action="/add" method="post" class="form">
+      <input type="text" name="id_no" placeholder="ID No" required />
+      <input type="text" name="name" placeholder="Name" required />
+      <input type="date" name="birthday" placeholder="Birthday" />
+      <input type="text" name="ss_no" placeholder="SS No" />
+      <input type="email" name="email" placeholder="Email" />
+      <input type="text" name="department" placeholder="Department" />
+      <input type="text" name="job" placeholder="Job Title" />
+      <input type="date" name="start_date" placeholder="Start Date" />
+      <input type="date" name="end_date" placeholder="End Date" />
+      <input type="text" name="address" placeholder="Address" />
+      <input type="text" name="city" placeholder="City" />
+      <input type="text" name="state" placeholder="State" />
+      <input type="text" name="zip" placeholder="Zip Code" />
+      <textarea name="remark" placeholder="Remark"></textarea>
+
+      <div class="form-buttons">
+        <button type="submit" title="Add">➕</button>
+        <button formaction="/edit/<%= editId || '' %>" title="Edit">✏️</button>
+        <button formaction="/delete/<%= deleteId || '' %>" title="Delete">🗑️</button>
+        <button type="reset" title="Clear">📄</button>
+      </div>
+    </form>
+  </div>
+
   <script src="/js/employee.js"></script>
-  
+</body>
+</html>

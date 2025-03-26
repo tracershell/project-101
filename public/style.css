@@ -240,3 +240,89 @@ h2 {
   color: #1677ff;
   text-decoration: none;
 }
+
+
+/* employee.ejs 전용 스타일 - .employee-page 사용 */
+body.employee-page, html.employee-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden; /* prevent double scroll */
+}
+
+.employee-page .top-section {
+  flex: 1 1 70%;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.employee-page .bottom-section {
+  flex: 0 0 30%;
+  background: #f0f0f0;
+  padding: 1rem;
+  border-top: 1px solid #ccc;
+  overflow-y: auto;
+}
+
+.employee-page .form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.employee-page .form input,
+.employee-page .form textarea {
+  flex: 1 1 30%;
+  padding: 0.5rem;
+  box-sizing: border-box;
+}
+
+.employee-page .form-buttons {
+  margin-top: 0.5rem;
+}
+
+.employee-page .form-buttons button {
+  margin-right: 0.5rem;
+  padding: 0.5rem 1rem;
+}
+
+.employee-page table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.employee-page th,
+.employee-page td {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  text-align: left;
+}
+
+.employee-page thead th {
+  cursor: pointer;
+  background-color: #f9f9f9;
+}
+
+.employee-page .compact-table {
+  font-size: 12px;
+  table-layout: fixed;
+  word-wrap: break-word;
+}
+
+.employee-page .compact-table th,
+.employee-page .compact-table td {
+  padding: 0.3rem;
+}
+
+.employee-page .bottom-section {
+  flex: 0 0 20% !important;
+  font-size: 12px;
+  overflow-y: auto;
+}
+
+.employee-page .compact-form input,
+.employee-page .compact-form textarea,
+.employee-page .compact-form button {
+  font-size: 11px;
+  padding: 0.3rem;
+}

@@ -9,7 +9,7 @@ CREATE TABLE users (
 
 -- employee tabel
 
-CREATE TABLE employees (
+CREATE TABLE employee (
   id INT AUTO_INCREMENT PRIMARY KEY,
   id_no VARCHAR(50),
   name VARCHAR(100),
