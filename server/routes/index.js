@@ -158,7 +158,69 @@ router.post('/add', (req, res) => {
   });
 });
 
+// employee 수정 라우터
+router.post('/edit/:eid', (req, res) => {
+  // 로그인 체크
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
 
+  const eidParam = req.params.eid;  // URL 경로에서 받은 eid
+  const {
+    status, eid, name, ss, birth, email, phone,
+    jcode, jtitle, sdate, edate, sick, work1,
+    address, city, state, zip, remark
+  } = req.body;
+
+  // 업데이트 쿼리
+  const updateQuery = `
+    UPDATE employees SET
+      status = ?, name = ?, ss = ?, birth = ?, email = ?, phone = ?,
+      jcode = ?, jtitle = ?, sdate = ?, edate = ?, sick = ?, work1 = ?,
+      address = ?, city = ?, state = ?, zip = ?, remark = ?
+    WHERE eid = ?
+  `;
+
+  const values = [
+    status || null,
+    name || null,
+    ss || null,
+    birth || null,
+    email || null,
+    phone || null,
+    jcode || null,
+    jtitle || null,
+    sdate || null,
+    edate || null,
+    sick || 0,
+    work1 || null,
+    address || null,
+    city || null,
+    state || null,
+    zip || null,
+    remark || null,
+    eidParam
+  ];
+
+  db.query(updateQuery, values, (err, result) => {
+    if (err) {
+      console.error('직원 수정 오류:', err);
+      return res.status(500).send('직원 수정 중 오류가 발생했습니다.');
+    }
+
+    if (result.affectedRows === 0) {
+      return res.send(`
+        <script>
+          alert("수정할 직원 정보를 찾을 수 없습니다: ${eidParam}");
+          history.back();
+        </script>
+      `);
+    }
+
+    // 수정 완료 후 목록 페이지로 이동
+    res.redirect('/employees');
+  });
+});
 
 
 

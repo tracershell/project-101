@@ -135,7 +135,7 @@
       <button form="employeeForm" type="submit" title="Add">➕ 입력저장</button>
       <input type="text" name="selectedEid" placeholder="EID 입력" style="padding: 0.3rem;" />
       <button type="button" onclick="selectEmployee()">🔍 선택</button>
-      <form action="/edit/<%= editId || '' %>" method="post" style="display: inline;"><button type="submit" title="Edit">✏️ 수정</button></form>
+      <button type="submit" title="Edit" onclick="prepareEdit(event)">✏️ 수정</button>
       <form action="/delete/<%= deleteId || '' %>" method="post" style="display: inline;"><button type="submit" title="Delete">🗑️ 삭제</button></form>
       <button onclick="window.print()" title="Print">📄 출력</button>
     </div>
@@ -157,6 +157,32 @@
         });
       });
     });
+
+    function prepareEdit(event) {
+    event.preventDefault();
+
+    const eid = document.querySelector('input[name="eid"]').value.trim();
+    if (!eid) {
+      alert("수정할 직원의 EID를 먼저 선택하거나 입력해주세요.");
+      return;
+    }
+
+    const form = document.getElementById("employeeForm");
+    form.action = `/edit/${eid}`;
+    form.submit();  // employeeForm을 /edit/:eid 로 제출
+    }
+
+    
+    function setEditAction() {
+    const eid = document.querySelector('input[name="eid"]').value.trim();
+    if (!eid) {
+      alert("수정할 직원의 EID를 먼저 선택하거나 입력해주세요.");
+      event.preventDefault();
+      return;
+    }
+    const form = document.getElementById('editForm');
+    form.action = `/edit/${eid}`;
+    }
 
     // 선택 버튼 클릭 시 EID 검색 및 자동 입력
     function selectEmployee() {
