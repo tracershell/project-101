@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -100,40 +100,90 @@
     </table>
   </div>
 
-  <div class="bottom-section compact-form">
-    <div class="table-header">
-      <h2>Employee List</h2>
-      <button type="button" onclick="window.print()">🖨️ Print</button>
-    </div>
-    <form action="/add" method="post" class="form" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
-      <input type="text" name="status" placeholder="Status" />
-      <input type="text" name="eid" placeholder="EID" />
-      <input type="text" name="name" placeholder="Name" required />
-      <input type="text" name="ss" placeholder="SS No" />
-      <input type="date" name="birth" placeholder="Birthday" />
-      <input type="email" name="email" placeholder="Email" />
-      <input type="text" name="phone" placeholder="Phone" />
-      <input type="text" name="jcode" placeholder="Job Code" />
-      <input type="text" name="jtitle" placeholder="Job Title" />
-      <input type="date" name="sdate" placeholder="Start Date" />
-      <input type="date" name="edate" placeholder="End Date" />
-      <input type="number" name="sick" placeholder="Sick Days" />
-      <input type="text" name="work1" placeholder="Work Type" />
-      <input type="text" name="address" placeholder="Address" />
-      <input type="text" name="city" placeholder="City" />
-      <input type="text" name="state" placeholder="State" />
-      <input type="text" name="zip" placeholder="Zip Code" />
-      <input type="text" name="remark" placeholder="Remark" />
-
-      <div class="form-buttons" style="display: flex; align-items: center; gap: 0.5rem; margin-left: 1rem;">
-        <button type="submit" title="Add">➕</button>
-        <button formaction="/edit/<%= editId || '' %>" title="Edit">✏️</button>
-        <button formaction="/delete/<%= deleteId || '' %>" title="Delete">🗑️</button>
-        <button type="reset" title="Clear">📄</button>
-      </div>
-    </form>
+  <!-- 수정된 하단 영역만 반영한 employees.ejs 하단부 -->
+<div class="bottom-section compact-form" style="padding: 1rem;">
+  <div class="table-header">
+    <h2>Input, Search, Edit, Delete</h2>
   </div>
 
-  <script src="/js/employee.js"></script>
-</body>
-</html>
+  <form id="employeeForm" action="/add" method="post" class="form" style="display: flex; flex-wrap: nowrap; overflow-x: auto; width: 100%;">
+    <input type="text" name="status" placeholder="Status" />
+    <input type="text" name="eid" placeholder="EID" />
+    <input type="text" name="name" placeholder="Name" required />
+    <input type="text" name="ss" placeholder="SS No" />
+    <input type="date" name="birth" placeholder="Birthday" />
+    <input type="email" name="email" placeholder="Email" />
+    <input type="text" name="phone" placeholder="Phone" />
+    <input type="text" name="jcode" placeholder="Job Code" />
+    <input type="text" name="jtitle" placeholder="Job Title" />
+    <input type="date" name="sdate" placeholder="Start Date" />
+    <input type="date" name="edate" placeholder="End Date" />
+    <input type="number" name="sick" placeholder="Sick Days" />
+    <input type="text" name="work1" placeholder="Work Type" />
+    <input type="text" name="address" placeholder="Address" />
+    <input type="text" name="city" placeholder="City" />
+    <input type="text" name="state" placeholder="State" />
+    <input type="text" name="zip" placeholder="Zip Code" />
+    <input type="text" name="remark" placeholder="Remark" />
+  </form>
+
+  <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+    <button form="employeeForm" type="submit" title="Add">➕ 입력저장</button>
+    <input type="text" name="selectedEid" placeholder="EID 입력" style="padding: 0.3rem;" />
+    <button type="button" onclick="selectEmployee()">🔍 선택</button>
+    <form action="/edit/<%= editId || '' %>" method="post" style="display: inline;"><button type="submit" title="Edit">✏️ 수정</button></form>
+    <form action="/delete/<%= deleteId || '' %>" method="post" style="display: inline;"><button type="submit" title="Delete">🗑️ 삭제</button></form>
+    <button onclick="window.print()" title="Print">📄 출력</button>
+  </div>
+
+  <script>
+    // Enter 키로 다음 input으로 이동
+    document.addEventListener("DOMContentLoaded", () => {
+      const formInputs = document.querySelectorAll(".form input");
+      formInputs.forEach((input, index) => {
+        input.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            const nextInput = formInputs[index + 1];
+            if (nextInput) nextInput.focus();
+            else formInputs[0].focus();
+          }
+        });
+      });
+    });
+
+    // 선택 버튼 클릭 시 EID 검색 및 자동 입력
+    function selectEmployee() {
+      const eidInput = document.querySelector('input[name="selectedEid"]');
+      const eidValue = eidInput.value.trim();
+      const rows = document.querySelectorAll("#employeeTable tbody tr");
+      let found = false;
+
+      rows.forEach(row => {
+        const eidCell = row.cells[2];
+        if (eidCell && eidCell.innerText.trim() === eidValue) {
+          found = true;
+          row.style.backgroundColor = "#ffff99";
+
+          const fieldMap = ["status", "eid", "name", "ss", "birth", "email", "phone", "jcode", "jtitle", "sdate", "edate", "sick", "work1", "address", "city", "state", "zip", "remark"];
+          fieldMap.forEach((field, i) => {
+            const input = document.querySelector(`.form input[name="${field}"]`);
+            const cell = row.cells[i + 1];
+            if (input && cell) {
+              let value = cell.innerText.trim();
+              if (input.type === "date" && value) {
+                const parts = value.split("/");
+                if (parts.length === 3) value = `${parts[2]}-${parts[0].padStart(2, "0")}-${parts[1].padStart(2, "0")}`;
+              }
+              input.value = value;
+            }
+          });
+        } else {
+          row.style.backgroundColor = "";
+        }
+      });
+
+      if (!found) alert("해당 EID를 가진 직원을 찾을 수 없습니다.");
+    }
+  </script>
+</div>
