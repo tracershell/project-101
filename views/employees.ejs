@@ -139,6 +139,7 @@
 </form>
   
     <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+      <button type="button" onclick="clearFormInputs()">🧹 입력초기화</button>
       <button form="employeeForm" type="submit" title="Add">➕ 입력저장</button>
       <input type="text" name="selectedEid" placeholder="EID 입력" style="padding: 0.3rem;" />
       <button type="button" onclick="selectEmployee()">🔍 선택</button>
@@ -152,6 +153,21 @@
   
 
   <script>
+
+  // ▶️ 입력값 초기화 버튼 기능 추가
+  function clearFormInputs() {
+    const form = document.getElementById("employeeForm");
+    if (!form) return;
+
+    const inputs = form.querySelectorAll("input[type='text'], input[type='email'], input[type='date'], input[type='number']");
+    inputs.forEach(input => input.value = "");
+  }
+
+  // ▶️ 수정된 버튼 영역: 입력 버튼 앞에 초기화 버튼 추가
+  // (이 내용은 기존 <div> 안에 삽입해 주세요)
+  // <button type="button" onclick="clearFormInputs()">🧹 입력초기화</button>
+
+    
     // Enter 키로 다음 input으로 이동
     document.addEventListener("DOMContentLoaded", () => {
       const formInputs = document.querySelectorAll(".form input");
@@ -231,6 +247,11 @@
     window.open(`/print/${eid}`, '_blank');
   }
 
+
+// ▶️ view / print 버튼 내부 로직 확인: eid 가 form 외부 input 에서 넘어오고 있음
+  // 그러나 form 안에 같은 이름의 hidden input 을 둔다면 안정성 증가 가능
+  // 아래 두 함수에는 문제가 없습니다만, "eid"가 비어있으면 동작 안 합니다
+
     // 선택된 직원 보기
     function viewEmployee() {
     const eid = document.querySelector('input[name="eid"]').value.trim();
@@ -240,6 +261,7 @@
     }
     window.open(`/view-one/${eid}`, '_blank');
   }
+  
 
   // 선택된 직원 출력
   function printEmployee() {
@@ -250,7 +272,6 @@
     }
     window.open(`/print/${eid}`, '_blank');
   }
-
 
     // 선택 버튼 클릭 시 EID 검색 및 자동 입력
     function selectEmployee() {
