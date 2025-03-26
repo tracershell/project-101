@@ -48,14 +48,19 @@
       <thead>
         <tr>
           <th class="id-col">ID</th>
+          <th>Status</th>
+          <th>EID</th>
           <th class="name-col">Name</th>
-          <th class="date-col">Birthday</th>
           <th>SS No</th>
+          <th class="date-col">Birthday</th>
           <th class="email-col">Email</th>
-          <th>Department</th>
-          <th>Job</th>
+          <th>Phone</th>
+          <th>Job Code</th>
+          <th>Job Title</th>
           <th class="date-col">Start</th>
           <th class="date-col">End</th>
+          <th>Sick</th>
+          <th>Work</th>
           <th class="address-col">Address</th>
           <th>City</th>
           <th>State</th>
@@ -67,15 +72,20 @@
         <% if (employees && employees.length > 0) { %>
           <% employees.forEach(emp => { %>
             <tr>
-              <td class="id-col"><%= emp.id_no %></td>
-              <td class="name-col"><%= emp.name %></td>
-              <td class="date-col"><%= emp.birthday ? new Date(emp.birthday).toLocaleDateString('en-US') : '' %></td>
-              <td><%= emp.ss_no || '' %></td>
+              <td class="id-col"><%= emp.id %></td>
+              <td><%= emp.status || '' %></td>
+              <td><%= emp.eid || '' %></td>
+              <td class="name-col"><%= emp.name || '' %></td>
+              <td><%= emp.ss || '' %></td>
+              <td class="date-col"><%= emp.birth ? new Date(emp.birth).toLocaleDateString('en-US') : '' %></td>
               <td class="email-col"><%= emp.email || '' %></td>
-              <td><%= emp.department || '' %></td>
-              <td><%= emp.job || '' %></td>
-              <td class="date-col"><%= emp.start_date ? new Date(emp.start_date).toLocaleDateString('en-US') : '' %></td>
-              <td class="date-col"><%= emp.end_date ? new Date(emp.end_date).toLocaleDateString('en-US') : '' %></td>
+              <td><%= emp.phone || '' %></td>
+              <td><%= emp.jcode || '' %></td>
+              <td><%= emp.jtitle || '' %></td>
+              <td class="date-col"><%= emp.sdate ? new Date(emp.sdate).toLocaleDateString('en-US') : '' %></td>
+              <td class="date-col"><%= emp.edate ? new Date(emp.edate).toLocaleDateString('en-US') : '' %></td>
+              <td><%= emp.sick || '' %></td>
+              <td><%= emp.work1 || '' %></td>
               <td class="address-col"><%= emp.address || '' %></td>
               <td><%= emp.city || '' %></td>
               <td><%= emp.state || '' %></td>
@@ -84,31 +94,38 @@
             </tr>
           <% }) %>
         <% } else { %>
-          <tr><td colspan="14">직원 정보가 없습니다.</td></tr>
+          <tr><td colspan="19">직원 정보가 없습니다.</td></tr>
         <% } %>
       </tbody>
     </table>
   </div>
 
   <div class="bottom-section compact-form">
-    <h3>Search / Add / Edit / Delete Employee</h3>
-    <form action="/add" method="post" class="form">
-      <input type="text" name="id_no" placeholder="ID No" required />
+    <div class="table-header">
+      <h2>Employee List</h2>
+      <button type="button" onclick="window.print()">🖨️ Print</button>
+    </div>
+    <form action="/add" method="post" class="form" style="display: flex; flex-wrap: nowrap; overflow-x: auto;">
+      <input type="text" name="status" placeholder="Status" />
+      <input type="text" name="eid" placeholder="EID" />
       <input type="text" name="name" placeholder="Name" required />
-      <input type="date" name="birthday" placeholder="Birthday" />
-      <input type="text" name="ss_no" placeholder="SS No" />
+      <input type="text" name="ss" placeholder="SS No" />
+      <input type="date" name="birth" placeholder="Birthday" />
       <input type="email" name="email" placeholder="Email" />
-      <input type="text" name="department" placeholder="Department" />
-      <input type="text" name="job" placeholder="Job Title" />
-      <input type="date" name="start_date" placeholder="Start Date" />
-      <input type="date" name="end_date" placeholder="End Date" />
+      <input type="text" name="phone" placeholder="Phone" />
+      <input type="text" name="jcode" placeholder="Job Code" />
+      <input type="text" name="jtitle" placeholder="Job Title" />
+      <input type="date" name="sdate" placeholder="Start Date" />
+      <input type="date" name="edate" placeholder="End Date" />
+      <input type="number" name="sick" placeholder="Sick Days" />
+      <input type="text" name="work1" placeholder="Work Type" />
       <input type="text" name="address" placeholder="Address" />
       <input type="text" name="city" placeholder="City" />
       <input type="text" name="state" placeholder="State" />
       <input type="text" name="zip" placeholder="Zip Code" />
-      <textarea name="remark" placeholder="Remark"></textarea>
+      <input type="text" name="remark" placeholder="Remark" />
 
-      <div class="form-buttons">
+      <div class="form-buttons" style="display: flex; align-items: center; gap: 0.5rem; margin-left: 1rem;">
         <button type="submit" title="Add">➕</button>
         <button formaction="/edit/<%= editId || '' %>" title="Edit">✏️</button>
         <button formaction="/delete/<%= deleteId || '' %>" title="Delete">🗑️</button>

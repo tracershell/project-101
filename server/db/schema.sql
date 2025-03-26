@@ -6,10 +6,33 @@ CREATE TABLE users (
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 가입 시간
 );
 
+CREATE TABLE employees (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  status VARCHAR(10),
+  eid VARCHAR(10),
+  name VARCHAR(60),
+  ss VARCHAR(20),
+  birth DATE,
+  email VARCHAR(60),
+  phone VARCHAR(20),
+  jcode VARCHAR(10),
+  jtitle VARCHAR(60),
+  sdate DATE,
+  edate DATE,
+  sick INT,
+  work1 VARCHAR(20),
+  address VARCHAR(100),
+  city VARCHAR(50),
+  state VARCHAR(50),
+  zip VARCHAR(20),
+  remark TEXT
+);
+
+
 
 -- employee tabel
 
-CREATE TABLE employee (
+CREATE TABLE employees (
   id INT AUTO_INCREMENT PRIMARY KEY,
   id_no VARCHAR(50),
   name VARCHAR(100),

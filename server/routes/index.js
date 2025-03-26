@@ -54,31 +54,33 @@ router.get('/dashboard', (req, res) => {
   });
 });
 
-// employee
-router.get('/employee', (req, res) => {
-  if (!req.session.user) {
+// Dashboard 에서 employee 호출로 employee.ejs 렌더링
+// employee.ejs 에서는 employee 테이블의 레코드 목록을 표시
+
+router.get('/employees', (req, res) => {
+  if (!req.session.user) {                    // 로그인 안 된 경우 로그인 페이지로 리다이렉트
     return res.redirect('/login');
   }
 
-  // employee 테이블에서 모든 레코드를 가져와서 employees.ejs로 렌더링하기 위한 result 목록 배열 추출
-    db.query('SELECT * FROM employee', (err, results) => {
+  // MySQL Project101db 의 employees 테이블에서 모든 레코드를 가져와서 employees.ejs로 렌더링하기 위한 result 목록 배열 추출
+  db.query('SELECT * FROM employees', (err, results) => {
     if (err) {
       console.error('DB 오류:', err);               // DB 오류 발생시 콘솔에 오류 메시지 출력             
       return res.status(500).send('Database error');  // DB 오류 발생시 500 에러 메시지 전송
     }
 
-  res.render('employee', {
-    layout: 'layout', // (선택) 기본 layout 설정이 되어 있다면 생략 가능
-    title: 'employee',
-    editId: 'none',
-    deleteId: '',
-    employees: results,  // 직원 목록 배열 전달 employees.ejs로
-    name: req.session.user.name || 'Guest',
-    isAuthenticated: true,
-    now: new Date().toString(),
-  });
+    res.render('employees', {
+      layout: 'layout', // (선택) 기본 layout 설정이 되어 있다면 생략 가능
+      title: 'employees',
+      editId: 'none',
+      deleteId: '',
+      employees: results,  // 직원 목록 배열 전달 employees.ejs로
+      name: req.session.user.name || 'Guest',
+      isAuthenticated: true,
+      now: new Date().toString(),
+    });
 
-});
+  });
 
 });
 
@@ -94,27 +96,26 @@ router.get('/employee', (req, res) => {
 
 //
 
+/*
+router.post('/add', (req, res) => {
+  if (!req.session.user) {
+    return res.redirect('/login');
+  }
+  const { name, email, phone } = req.body;
+  db.query(
+    'INSERT INTO employee (name, email, phone) VALUES (?, ?, ?)',  // INSERT 쿼리 실행
+    [name, email, phone],
+    (err, results) => {   // 쿼리 실행 결과 처리
+      if (err) {
+        console.error(err);
+        return res.status(500).send('DB error');
+      }
+      res.redirect('/employee');  // 추가 후 employee 목록으로 리다이렉트
+    }
+  );
+});
 
-// employee add
- router.post('/add', (req, res) => {
-   if (!req.session.user) {
-     return res.redirect('/login');
-   }
-   const { name, email, phone } = req.body;
-   db.query(
-     'INSERT INTO employee (name, email, phone) VALUES (?, ?, ?)',  // INSERT 쿼리 실행
-     [name, email, phone],
-     (err, results) => {   // 쿼리 실행 결과 처리
-       if (err) {
-         console.error(err);
-         return res.status(500).send('DB error');
-       }
-       res.redirect('/employee');  // 추가 후 employee 목록으로 리다이렉트
-     }
-   );
- });        
-
-
+*/
 // employee modify
 // router.post('/edit/:id', (req, res) => {
 //   if (!req.session.user) {
