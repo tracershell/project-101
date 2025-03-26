@@ -88,55 +88,76 @@ router.get('/employees', (req, res) => {
 router.post('/add', (req, res) => {
   // 로그인 체크
   if (!req.session.user) {
-    return res.redirect('/login');   // 로그인 안 되어 있으면 로그인 페이지로로
+    return res.redirect('/login');   // 로그인 안 되어 있으면 로그인 페이지로
   }
 
-  const {
+  console.log("받은 eid:", req.body.eid);  // 받은 eid 콘솔에 출력(테스트용)
+
+  const {                             // 받은 form 데이터를 변수에            
     status, eid, name, ss, birth, email, phone,
     jcode, jtitle, sdate, edate, sick, work1,
     address, city, state, zip, remark
   } = req.body;
 
-  // INSERT 쿼리
-  const insertQuery = `
-    INSERT INTO employees (
-      status, eid, name, ss, birth, email, phone,
-      jcode, jtitle, sdate, edate, sick, work1,
-      address, city, state, zip, remark
-    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-  `;
-
-  const values = [
-    status || null,
-    eid || null,
-    name || null,
-    ss || null,
-    birth || null,
-    email || null,
-    phone || null,
-    jcode || null,
-    jtitle || null,
-    sdate || null,
-    edate || null,
-    sick || 0,
-    work1 || null,
-    address || null,
-    city || null,
-    state || null,
-    zip || null,
-    remark || null
-  ];
-
-  db.query(insertQuery, values, (err, result) => {
+  // 먼저 eid 중복 체크
+  const checkQuery = 'SELECT COUNT(*) AS count FROM employees WHERE eid = ?';
+  db.query(checkQuery, [eid], (err, results) => {
     if (err) {
-      console.error('직원 추가 오류:', err);
-      return res.status(500).send('직원 추가 중 오류가 발생했습니다.');
+      console.error('eid 중복 확인 오류:', err);
+      return res.status(500).send('eid 중복 확인 중 오류가 발생했습니다.');
     }
 
-    // 저장 후 다시 직원 목록 페이지로 이동
-    res.redirect('/employees');
+    if (results[0].count > 0) {
+      return res.send(`
+        <script>
+          alert("이미 존재하는 직원 ID입니다: ${eid}");
+          history.back(); // 이전 페이지로 되돌아가기
+        </script>
+      `);
+    }
+
+    // 중복 없으면 INSERT 실행
+    const insertQuery = `
+      INSERT INTO employees (
+        status, eid, name, ss, birth, email, phone,
+        jcode, jtitle, sdate, edate, sick, work1,
+        address, city, state, zip, remark
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const values = [
+      status || null,
+      eid || null,
+      name || null,
+      ss || null,
+      birth || null,
+      email || null,
+      phone || null,
+      jcode || null,
+      jtitle || null,
+      sdate || null,
+      edate || null,
+      sick || 0,
+      work1 || null,
+      address || null,
+      city || null,
+      state || null,
+      zip || null,
+      remark || null
+    ];
+
+    db.query(insertQuery, values, (err, result) => {
+      if (err) {
+        console.error('직원 추가 오류:', err);
+        return res.status(500).send('직원 추가 중 오류가 발생했습니다.');
+      }
+
+      // 저장 후 다시 직원 목록 페이지로 이동
+      res.redirect('/employees');
+    });
   });
 });
+
 
 
 
