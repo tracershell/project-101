@@ -1,0 +1,72 @@
+<!-- views/pdf-employees-print.ejs -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Employee List - Print</title>
+  <link rel="stylesheet" href="/pdf-employees-print.css">
+</head>
+<body>
+  <div class="container">
+    <h2>Employee List</h2>
+    <table class="employee-table">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Status</th>
+          <th>EID</th>
+          <th>Name</th>
+          <th>SS No</th>
+          <th>Birthday</th>
+          <th>Email</th>
+          <th>Phone</th>
+          <th>Job Code</th>
+          <th>Job Title</th>
+          <th>Start</th>
+          <th>End</th>
+          <th>Sick</th>
+          <th>Work</th>
+          <th>Address</th>
+          <th>City</th>
+          <th>State</th>
+          <th>Zip</th>
+          <th>Remark</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% employees.forEach(emp => { %>
+        <tr>
+          <td><%= emp.id %></td>
+          <td><%= emp.status %></td>
+          <td><%= emp.eid %></td>
+          <td><%= emp.name %></td>
+          <td><%= emp.ss %></td>
+          <td><%= emp.birth ? emp.birth.toISOString().split('T')[0] : '' %></td>
+          <td><%= emp.email %></td>
+          <td><%= emp.phone %></td>
+          <td><%= emp.jcode %></td>
+          <td><%= emp.jtitle %></td>
+          <td><%= emp.sdate ? emp.sdate.toISOString().split('T')[0] : '' %></td>
+          <td><%= emp.edate ? emp.edate.toISOString().split('T')[0] : '' %></td>
+          <td><%= emp.sick %></td>
+          <td><%= emp.work1 %></td>
+          <td><%= emp.address %></td>
+          <td><%= emp.city %></td>
+          <td><%= emp.state %></td>
+          <td><%= emp.zip %></td>
+          <td><%= emp.remark %></td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+  <script>
+    window.onload = () => {
+      window.print();
+      window.onafterprint = () => {
+        window.close();
+      };
+    }
+  </script>
+</body>
+</html>

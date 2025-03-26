@@ -39,10 +39,16 @@
 </head>
 <body class="employee-page">
   <div class="top-section">
-    <div class="table-header">
+    
+    <!-- 추가된 Employee 전체 PDF 보기/출력 버튼 -->
+    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center;">
       <h2>Employee List</h2>
-      <button onclick="window.print()">🖨️ Print</button>
-    </div>
+      <div>
+        <button onclick="window.open('/employees/pdf-view', '_blank')">📄 View PDF</button>
+        <button onclick="window.open('/employees/pdf-print', '_blank')">🖨️ Print PDF</button>
+      </div>
+      
+  </div>
 
     <table id="employeeTable" class="compact-table">
       <thead>

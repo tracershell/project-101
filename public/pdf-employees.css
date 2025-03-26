@@ -1,0 +1,63 @@
+/* pdf-employees.css - 일반 보기용 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    color: #333;
+    padding: 2rem;
+    margin: 0;
+    font-size: 12px;
+  }
+  
+  .container {
+    max-width: 95%;
+    margin: 0 auto;
+    background-color: #fff;
+    padding: 1rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  }
+  
+  h2 {
+    text-align: center;
+    font-size: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  .employee-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 11px;
+    table-layout: auto;
+  }
+  
+  .employee-table th,
+  .employee-table td {
+    border: 1px solid #ccc;
+    padding: 6px 10px;
+    text-align: center;
+    white-space: nowrap;
+  }
+  
+  .employee-table thead th {
+    background-color: #f0f0f0;
+    font-weight: bold;
+  }
+  
+  .view-buttons {
+    text-align: center;
+    margin-top: 2rem;
+  }
+  
+  .view-buttons .btn {
+    background-color: #3498db;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  
+  .view-buttons .btn:hover {
+    background-color: #2980b9;
+  }
+  

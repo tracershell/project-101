@@ -327,6 +327,41 @@ router.get('/print/:eid', (req, res) => {
   });
 });
 
+// 모든 직원 목록 PDF용 view 출력
+router.get('/employees/pdf-view', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  db.query('SELECT * FROM employees', (err, results) => {
+    if (err) return res.status(500).send('DB 오류 발생');
+
+    res.render('pdf-employees-view', {
+      layout: false,
+      employees: results,
+    });
+  });
+});
+
+// 모든 직원 목록 PDF용 print 페이지 출력 (자동 인쇄 및 창 닫기)
+router.get('/employees/pdf-print', (req, res) => {
+  if (!req.session.user) return res.redirect('/login');
+
+  db.query('SELECT * FROM employees', (err, results) => {
+    if (err) return res.status(500).send('DB 오류 발생');
+
+    res.render('pdf-employees-print', {
+      layout: false,
+      employees: results,
+    });
+  });
+});
+
+/*
+추가로 views 디렉토리에 다음 두 개의 EJS 템플릿 파일을 생성해 주세요:
+  - pdf-employees-view.ejs : 가로 방향 스타일 + table 보기용
+  - pdf-employees-print.ejs : 가로 방향 + 자동 print + window.close() 포함
+*/
+
+
 // 
 
 module.exports = router;
