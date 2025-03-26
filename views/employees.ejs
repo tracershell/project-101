@@ -101,40 +101,46 @@
   </div>
 
   <!-- 수정된 하단 영역만 반영한 employees.ejs 하단부 -->
-<div class="bottom-section compact-form" style="padding: 1rem;">
-  <div class="table-header">
-    <h2>Input, Search, Edit, Delete</h2>
+  <div class="bottom-section compact-form" style="padding: 1rem;">
+    <div class="table-header">
+      <h2>Input, Search, Edit, Delete</h2>
+    </div>
+  
+    <form id="employeeForm" action="/add" method="post" class="form" 
+          style="display: flex; flex-wrap: wrap; gap: 0.5rem; width: 100%; justify-content: space-between;">
+      <!-- 1st Line -->
+      <input type="text" name="status" placeholder="Status" style="flex: 1 1 10%;" />
+      <input type="text" name="eid" placeholder="EID" style="flex: 1 1 10%;" />
+      <input type="text" name="name" placeholder="Name" required style="flex: 1 1 12%;" />
+      <input type="text" name="ss" placeholder="SS No" style="flex: 1 1 12%;" />
+      <input type="date" name="birth" placeholder="Birthday" style="flex: 1 1 12%;" />
+      <input type="email" name="email" placeholder="Email" style="flex: 1 1 15%;" />
+      <input type="text" name="phone" placeholder="Phone" style="flex: 1 1 12%;" />
+      <input type="text" name="jcode" placeholder="Job Code" style="flex: 1 1 10%;" />
+      <input type="text" name="jtitle" placeholder="Job Title" style="flex: 1 1 12%;" />
+  
+      <!-- 2nd Line -->
+      <input type="date" name="sdate" placeholder="Start Date" style="flex: 1 1 12%;" />
+      <input type="date" name="edate" placeholder="End Date" style="flex: 1 1 12%;" />
+      <input type="number" name="sick" placeholder="Sick Days" style="flex: 1 1 10%;" />
+      <input type="text" name="work1" placeholder="Work Type" style="flex: 1 1 10%;" />
+      <input type="text" name="address" placeholder="Address" style="flex: 1 1 15%;" />
+      <input type="text" name="city" placeholder="City" style="flex: 1 1 10%;" />
+      <input type="text" name="state" placeholder="State" style="flex: 1 1 8%;" />
+      <input type="text" name="zip" placeholder="Zip Code" style="flex: 1 1 10%;" />
+      <input type="text" name="remark" placeholder="Remark" style="flex: 1 1 15%;" />
+    </form>
+  
+    <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
+      <button form="employeeForm" type="submit" title="Add">➕ 입력저장</button>
+      <input type="text" name="selectedEid" placeholder="EID 입력" style="padding: 0.3rem;" />
+      <button type="button" onclick="selectEmployee()">🔍 선택</button>
+      <form action="/edit/<%= editId || '' %>" method="post" style="display: inline;"><button type="submit" title="Edit">✏️ 수정</button></form>
+      <form action="/delete/<%= deleteId || '' %>" method="post" style="display: inline;"><button type="submit" title="Delete">🗑️ 삭제</button></form>
+      <button onclick="window.print()" title="Print">📄 출력</button>
+    </div>
   </div>
-
-  <form id="employeeForm" action="/add" method="post" class="form" style="display: flex; flex-wrap: nowrap; overflow-x: auto; width: 100%;">
-    <input type="text" name="status" placeholder="Status" />
-    <input type="text" name="eid" placeholder="EID" />
-    <input type="text" name="name" placeholder="Name" required />
-    <input type="text" name="ss" placeholder="SS No" />
-    <input type="date" name="birth" placeholder="Birthday" />
-    <input type="email" name="email" placeholder="Email" />
-    <input type="text" name="phone" placeholder="Phone" />
-    <input type="text" name="jcode" placeholder="Job Code" />
-    <input type="text" name="jtitle" placeholder="Job Title" />
-    <input type="date" name="sdate" placeholder="Start Date" />
-    <input type="date" name="edate" placeholder="End Date" />
-    <input type="number" name="sick" placeholder="Sick Days" />
-    <input type="text" name="work1" placeholder="Work Type" />
-    <input type="text" name="address" placeholder="Address" />
-    <input type="text" name="city" placeholder="City" />
-    <input type="text" name="state" placeholder="State" />
-    <input type="text" name="zip" placeholder="Zip Code" />
-    <input type="text" name="remark" placeholder="Remark" />
-  </form>
-
-  <div style="display: flex; justify-content: center; align-items: center; gap: 1rem; flex-wrap: wrap; margin-top: 1rem;">
-    <button form="employeeForm" type="submit" title="Add">➕ 입력저장</button>
-    <input type="text" name="selectedEid" placeholder="EID 입력" style="padding: 0.3rem;" />
-    <button type="button" onclick="selectEmployee()">🔍 선택</button>
-    <form action="/edit/<%= editId || '' %>" method="post" style="display: inline;"><button type="submit" title="Edit">✏️ 수정</button></form>
-    <form action="/delete/<%= deleteId || '' %>" method="post" style="display: inline;"><button type="submit" title="Delete">🗑️ 삭제</button></form>
-    <button onclick="window.print()" title="Print">📄 출력</button>
-  </div>
+  
 
   <script>
     // Enter 키로 다음 input으로 이동

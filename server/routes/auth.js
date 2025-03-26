@@ -34,7 +34,7 @@ router.post('/login', (req, res) => {
       }
 
       if (results.length > 0) {
-        req.session.user = { name: results[0].username };
+        req.session.user = { name: results[0].username };  // 로그인 성공 시, 세션에 사용자 정보 저장
         res.redirect('/dashboard');    // 로그인 성공시 메인 페이지로 이동 : dashboard.ejs로 이동
 
       } else {

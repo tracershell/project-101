@@ -58,7 +58,7 @@ router.get('/dashboard', (req, res) => {
 // employee.ejs 에서는 employee 테이블의 레코드 목록을 표시
 
 router.get('/employees', (req, res) => {
-  if (!req.session.user) {                    // 로그인 안 된 경우 로그인 페이지로 리다이렉트
+  if (!req.session.user) {                    // 세션 확인후, 로그인 안 된 경우 로그인 페이지로 리다이렉트
     return res.redirect('/login');
   }
 
@@ -84,83 +84,59 @@ router.get('/employees', (req, res) => {
 
 });
 
-//   res.render('employee', { layout: 'layout' });
-//
-//  db.query('SELECT * FROM employee', (err, results) => {
-//    if (err) {
-//      console.error(err);
-//      return res.status(500).send('DB error');
-//    }
-//    res.render('employee', { employees: results });
-//  });
-
-//
-
-/*
+// employee 추가 라우터
 router.post('/add', (req, res) => {
+  // 로그인 체크
   if (!req.session.user) {
-    return res.redirect('/login');
+    return res.redirect('/login');   // 로그인 안 되어 있으면 로그인 페이지로로
   }
-  const { name, email, phone } = req.body;
-  db.query(
-    'INSERT INTO employee (name, email, phone) VALUES (?, ?, ?)',  // INSERT 쿼리 실행
-    [name, email, phone],
-    (err, results) => {   // 쿼리 실행 결과 처리
-      if (err) {
-        console.error(err);
-        return res.status(500).send('DB error');
-      }
-      res.redirect('/employee');  // 추가 후 employee 목록으로 리다이렉트
+
+  const {
+    status, eid, name, ss, birth, email, phone,
+    jcode, jtitle, sdate, edate, sick, work1,
+    address, city, state, zip, remark
+  } = req.body;
+
+  // INSERT 쿼리
+  const insertQuery = `
+    INSERT INTO employees (
+      status, eid, name, ss, birth, email, phone,
+      jcode, jtitle, sdate, edate, sick, work1,
+      address, city, state, zip, remark
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `;
+
+  const values = [
+    status || null,
+    eid || null,
+    name || null,
+    ss || null,
+    birth || null,
+    email || null,
+    phone || null,
+    jcode || null,
+    jtitle || null,
+    sdate || null,
+    edate || null,
+    sick || 0,
+    work1 || null,
+    address || null,
+    city || null,
+    state || null,
+    zip || null,
+    remark || null
+  ];
+
+  db.query(insertQuery, values, (err, result) => {
+    if (err) {
+      console.error('직원 추가 오류:', err);
+      return res.status(500).send('직원 추가 중 오류가 발생했습니다.');
     }
-  );
+
+    // 저장 후 다시 직원 목록 페이지로 이동
+    res.redirect('/employees');
+  });
 });
-
-*/
-// employee modify
-// router.post('/edit/:id', (req, res) => {
-//   if (!req.session.user) {
-//     return res.redirect('/login');
-//   }
-//   const { id } = req.params;
-//   const { name, email, phone } = req.body;
-//   db.query(  // UPDATE 쿼리 실행
-//     'UPDATE employee SET name = ?, email = ?, phone = ? WHERE id = ?',       // employee 테이블에서 id 값이 일치하는 레코드의 name, email, phone 값을 수정
-//     [name, email, phone, id],
-//     (err, results) => {      // 쿼리 실행 결과 처리
-//       if (err) {
-//         console.error(err);
-//         return res.status(500).send('DB error');
-//       }
-//       res.redirect('/employee');    // 수정 후 employee 목록으로 리다이렉트
-//     }
-//   );
-// });        
-
-// employee delete
-// router.get('/delete/:id', (req, res) => {
-//   if (!req.session.user) {
-//     return res.redirect('/login');
-//   }
-//   const { id } = req.params;
-//   db.query(
-//     'DELETE FROM employee WHERE id = ?',  // DELETE 쿼리 실행
-//     [id],
-//     (err, results) => {   // 쿼리 실행 결과 처리
-//       if (err) {
-//         console.error(err);
-//         return res.status(500).send('DB error');
-//       }
-//       res.redirect('/employee');  // 삭제 후 employee 목록으로 리다이렉트
-//     }
-//   );
-// });    
-
-
-// employee search
-// router.get('/employee/search', (req, res) => {               // search.ejs 파일을 렌더링                
-
-
-
 
 
 
