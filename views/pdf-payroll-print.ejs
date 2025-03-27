@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Payroll List</title>
+  <link rel="stylesheet" href="/pdf-payroll.css">
+</head>
+<body>
+  <h2>Payroll List for <%= pdate %></h2>
+  <table border="1" cellspacing="0" cellpadding="4">
+    <thead>
+      <tr>
+        <th>ID</th><th>Name</th><th>CK#</th><th>R.Time</th><th>O.Time</th><th>D.Time</th>
+        <th>FIT</th><th>S.S</th><th>Med</th><th>CAT</th><th>CAD</th><th>ADD</th><th>CSP</th><th>PDD</th>
+        <th>Gross</th><th>Tax</th><th>Net</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% list.forEach(item => { %>
+        <tr>
+          <td><%= item.eid %></td>
+          <td><%= item.name %></td>
+          <td><%= item.ckno %></td>
+          <td><%= item.rtime %></td>
+          <td><%= item.otime %></td>
+          <td><%= item.dtime %></td>
+          <td><%= item.fw %></td>
+          <td><%= item.sse %></td>
+          <td><%= item.me %></td>
+          <td><%= item.caw %></td>
+          <td><%= item.cade %></td>
+          <td><%= item.adv %></td>
+          <td><%= item.csp %></td>
+          <td><%= item.dd %></td>
+          <td><%= item.gross %></td>
+          <td><%= item.tax %></td>
+          <td><%= item.net %></td>
+        </tr>
+      <% }) %>
+    </tbody>
+  </table>
+  <script>
+    window.onload = () => {
+      window.print();
+      window.onafterprint = () => {
+        window.close();
+      };
+    }
+  </script>
+</body>
+</html>
