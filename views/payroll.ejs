@@ -159,7 +159,7 @@
       return;
     }
 
-    fetch(`/paylist/latest?eid=${eid}`)
+    fetch(`/payroll/paylist/latest?eid=${eid}`)
       .then(res => res.json())
       .then(data => {
         if (!data || !data.success) {

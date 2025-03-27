@@ -102,7 +102,7 @@ router.post('/paylist/add', (req, res) => {
 
 
 // GET /paylist/latest?eid=xxx
-router.get('/paylist/latest', (req, res) => {
+router.get('/payroll/paylist/latest', (req, res) => {
   const eid = req.query.eid;
   if (!eid) return res.json({ success: false, message: 'eid 누락' });
 
