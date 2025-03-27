@@ -15,8 +15,11 @@ router.get('/payroll', (req, res) => {
   db.query('SELECT eid, name, jcode, jtitle, work1 FROM employees WHERE status = "active"', (err, results) => {
     if (err) return res.status(500).send('DB 오류');
 
-    const selectedPdate = req.session.lastPayDate || ''; // 세션에서 paydate 불러오기
-    delete req.session.lastPayDate; // 1회용으로 삭제
+    const selectedPdate = req.session.lastPayDate || '';      // post 로 넘겨 받은 paydate 세션을 get router 에서 상수화 (아래쪽 render 에 넘긴다)
+    const selectedEidName = req.session.lastEidName || '';  // post 로 넘겨 받은 eid, name 세션을 get router 에서 상수화 (아래쪽 render 에 넘긴다)
+    delete req.session.lastPayDate;                           // 1회성으로 사용 후 삭제 (상수로 일단 아래로, 세션은 삭제)
+    delete req.session.lastEidName;                           // 1회성으로 사용 후 삭제  (상수로 일단 아래로, 세션은 삭제)      
+    
 
     res.render('payroll', {
       layout: 'layout',
@@ -25,6 +28,7 @@ router.get('/payroll', (req, res) => {
       name: req.session.user.name,
       employees: results,
       selectedPdate,                                   // 🟢 이 값을 EJS에 넘겨줘야 오류가 안 납니다
+      selectedEidName,                                 // ✅ 다음 page 보여주려고 session 에 추가
       now: new Date().toString()
     });
   });
@@ -42,7 +46,8 @@ router.post('/paylist/add', (req, res) => {
     eid, jcode, jtitle, work1
   } = req.body;
 
-  req.session.lastPayDate = pdate; // pay date 세션에 저장
+  req.session.lastPayDate = pdate;                      // post 로 받아와서 일단 pay date 를 세션에 저장 (get 으로 넘겨주고 삭제)
+  req.session.lastEidName = `eid: ${eid} / ${name}`;   // pay date 세션에 저장 : 두 세션값을 함께 받을 수 있는 이유는 pdate 는 input 요소 
 
 
   // 쉼표 제거 및 숫자 변환 처리
