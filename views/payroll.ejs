@@ -14,7 +14,7 @@
     .payroll-group { display: flex; gap: 1rem; padding: 10px; border: 2px solid #ccc; border-radius: 10px; flex-direction: row; align-items: flex-start; background-color: #f9f9f9; }
     .payroll-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
     .payroll-item label { font-weight: bold; }
-    .payroll-item input { width: 70px; }
+    .payroll-item input { width: 70px; width: 70px; text-align: center; }
     .payroll-summary-group { display: flex; gap: 1rem; padding: 10px; border: 2px solid #ccc; border-radius: 10px; background-color: #f3f3f3; }
     .payroll-summary-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 80px; }
     .payroll-form { width: 100%; box-sizing: border-box; }
@@ -59,23 +59,31 @@
           <div class="payroll-item"><label>Check No.</label><input type="text" name="ckno_table"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>R.T</label><input type="text" name="rtime" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>O.T</label><input type="text" name="otime" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>D.T</label><input type="text" name="dtime" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>R.T</label><input type="text" name="rtime" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>O.T</label><input type="text" name="otime" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>D.T</label><input type="text" name="dtime" oninput="formatDecimal(this)"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>FW</label><input type="text" name="fw" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>SSE</label><input type="text" name="sse" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>ME</label><input type="text" name="me" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>FW</label><input type="text" name="fw" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>SSE</label><input type="text" name="sse" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>ME</label><input type="text" name="me" oninput="formatDecimal(this)"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>CA-W</label><input type="text" name="caw" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>CA-de</label><input type="text" name="cade" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>CA-W</label><input type="text" name="caw" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>CA-de</label><input type="text" name="cade" oninput="formatDecimal(this)"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>ADV.</label><input type="text" name="adv" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>C.S</label><input type="text" name="d1" value="0" oninput="formatDecimal(this)"></div>
-          <div class="payroll-item"><label>D.D</label><input type="text" name="dd" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>ADV.</label><input type="text" name="adv" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>C.S</label><input type="text" name="d1" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>D.D</label><input type="text" name="dd" oninput="formatDecimal(this)"></div>
+        </div>
+        <div style="text-align: center; margin-top: 10px;">
+          <button type="button" onclick="calculateNet()">총액 계산</button>
+        </div>
+        <div class="payroll-group">
+          <div class="payroll-item"><label>Gross</label><input type="text" name="gross" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>Tax</label><input type="text" name="tax" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>Net</label><input type="text" name="net" oninput="formatDecimal(this)"></div>
         </div>
       </div>
 
@@ -148,13 +156,56 @@
     }
 
     function formatDecimal(input) {
-      let value = input.value;
-      value = value.replace(/[^\d.]/g, '');
-      const parts = value.split('.');
-      if (parts.length > 2) value = parts[0] + '.' + parts[1];
-      if (parts[1]?.length > 2) value = parts[0] + '.' + parts[1].substring(0, 2);
-      input.value = value;
+  let value = input.value;
+
+  // 숫자와 소수점만 허용
+  value = value.replace(/[^\d.]/g, '');
+
+  // 소수점 1개만 유지
+  const parts = value.split('.');
+  if (parts.length > 2) {
+    value = parts[0] + '.' + parts[1];
+  }
+
+  input.value = value; // 입력 중에는 가공하지 않음
+
+  // 포커스 벗어날 때 포맷 적용
+  input.addEventListener('blur', () => {
+    const num = parseFloat(input.value.replace(/,/g, '')); // 쉼표 제거 후 숫자 변환
+    if (!isNaN(num)) {
+      // 소수점 2자리 + 쉼표 형식 적용
+      input.value = num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+      });
     }
+  });
+}
+
+function calculateNet() {
+  const rtime = parseFloat(document.querySelector('[name="rtime"]').value.replace(/,/g, '')) || 0;
+  const otime = parseFloat(document.querySelector('[name="otime"]').value.replace(/,/g, '')) || 0;
+  const dtime = parseFloat(document.querySelector('[name="dtime"]').value.replace(/,/g, '')) || 0;
+
+  const fw = parseFloat(document.querySelector('[name="fw"]').value.replace(/,/g, '')) || 0;
+  const sse = parseFloat(document.querySelector('[name="sse"]').value.replace(/,/g, '')) || 0;
+  const me = parseFloat(document.querySelector('[name="me"]').value.replace(/,/g, '')) || 0;
+  const caw = parseFloat(document.querySelector('[name="caw"]').value.replace(/,/g, '')) || 0;
+  const cade = parseFloat(document.querySelector('[name="cade"]').value.replace(/,/g, '')) || 0;
+
+  const gross = rtime + otime + dtime;
+  const tax = fw + sse + me + caw + cade;
+  const net = gross - tax;
+
+  const grossField = document.querySelector('[name="gross"]');
+  const taxField = document.querySelector('[name="tax"]');
+  const netField = document.querySelector('[name="net"]');
+
+  grossField.value = gross.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  taxField.value = tax.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  netField.value = net.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
 
     document.addEventListener('DOMContentLoaded', () => {
       const fieldNames = ['ckno_table', 'rtime', 'otime', 'dtime', 'fw', 'sse', 'me', 'caw', 'cade', 'adv', 'd1', 'dd', 'remark'];

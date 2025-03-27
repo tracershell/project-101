@@ -35,12 +35,21 @@ app.set('layout', 'layout');                         // 기본 레이아웃: lay
 const authRoutes = require('./server/routes/auth');   // ./server/routes/auth.js 속에서  route.get, route.post, route.delete 를 주고 받을 수 있게
 const indexRoutes = require('./server/routes/index'); // ./server/routes/index.js 를 를 route.get, route.post, route.delete 를 주고 받을 수 있게
 const paylistRoutes = require('./server/routes/paylist');
-
+const testRoutes01 = require('./server/routes/test01');   // .server/routes/test01.js 를 등록
+const testRoutes02 = require('./server/routes/test02');   // .server/routes/test02.js 를 등록
+const testRoutes03 = require('./server/routes/test03');   // .server/routes/test03.js 를 등록
+const testRoutes04 = require('./server/routes/test04');   // .server/routes/test04.js 를 등록
+const testRoutes05 = require('./server/routes/test05');   // .server/routes/test05.js 를 등록
 
 // 라우터 적용
 app.use('/', authRoutes);   // 인증 관련 라우트 우선
 app.use('/', indexRoutes);  // 일반 페이지 라우트
 app.use('/', paylistRoutes);
+app.use('/', testRoutes01);   // test01.js 라우트 사용
+app.use('/', testRoutes02);   // test02.js 라우트 사용
+app.use('/', testRoutes03);   // test03.js 라우트 사용
+app.use('/', testRoutes04);   // test04.js 라우트 사용
+app.use('/', testRoutes05);   // test05.js 라우트 사용
 
 // 서버 실행
 const PORT = process.env.PORT || 3000;

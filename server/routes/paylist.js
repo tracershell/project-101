@@ -58,6 +58,7 @@ router.post('/paylist/add', (req, res) => {
   // 로그인 체크
   if (!req.session.user) {
     return res.redirect('/login');
+ 
   }
 
   const {

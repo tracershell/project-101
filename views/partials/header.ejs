@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title><%= title %> - ARGUS US INC.</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="/test01.css">
+  <link rel="icon" href="/images/favicon.ico" type="image/x-icon">
+</head>
+<body>
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    2055 E. 51st Street, Vernon, CA 90058&nbsp;&nbsp;&nbsp;&nbsp;| <a href="#">Read More →</a>
+  </div>
+
+  <!-- Navigation Bar -->
+  <nav class="navbar">
+    <div class="logo">ARGUS US INC.</div>
+
+    <% if (isAuthenticated) { %>
+    <div class="menu">
+      <a href="/">General</a>
+      <a href="/employees">employees</a>
+      <a href="/payroll">paylist</a>
+      <a href="#">Support</a>
+      <a href="#">Blog</a>
+      <a href="#">Company</a>
+      <a href="/test01">Test01</a>
+      <a href="/test02">Test02</a>
+      <a href="/test03">Test03</a>
+      <a href="/test04">Test04</a>
+      <a href="/test05">Test05</a>
+    </div>
+    <% } %>
+
+    <div class="auth-buttons">
+      <% if (isAuthenticated) { %>
+        <span class="btn-welcome">Welcome, <%= name %>!</span>
+        <a href="/logout" class="btn-signin">Log out</a>
+      <% } else { %>
+        <a href="/login" class="btn-signin">Sign In</a>
+        <button class="btn-get-started">Get Started</button>
+      <% } %>
+    </div>
+  </nav>

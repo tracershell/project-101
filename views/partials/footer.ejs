@@ -1,0 +1,8 @@
+  <!-- Footer: 로그인 상태가 아니면 보여줌 -->
+  <% if (!isAuthenticated) { %>
+    <footer class="footer">
+      <p>Current server time: <%= now %></p>
+    </footer>
+  <% } %>
+</body>
+</html>
