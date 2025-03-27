@@ -6,153 +6,30 @@
   <link rel="stylesheet" href="/style.css">
   <link rel="stylesheet" href="/payroll-page.css">
   <style>
-    .container {
-      margin: 0 20px;
-    }
-    .form-group {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      margin-bottom: 20px;
-    }
-    .form-group select {
-      min-width: 200px;
-    }
-    .reference-btn {
-      margin-left: 0.5rem;
-    }
-    .check-row {
-      margin-top: 20px;
-      display: flex;
-      gap: 0.5rem;
-      align-items: center;
-    }
-    .check-row input[type="text"] {
-      max-width: 150px;
-      flex-shrink: 1;
-    }
-    .payroll-table-wrapper {
-      display: flex;
-      flex-direction: row;
-      gap: 20px;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .payroll-group {
-      display: flex;
-      gap: 1rem;
-      padding: 10px;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      flex-direction: row;
-      align-items: flex-start;
-      background-color: #f9f9f9;
-    }
-    .payroll-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-    }
-    .payroll-item label {
-      font-weight: bold;
-    }
-    .payroll-item input {
-      width: 70px;
-    }
-    .payroll-summary-group {
-      display: flex;
-      gap: 1rem;
-      padding: 10px;
-      border: 2px solid #ccc;
-      border-radius: 10px;
-      flex-direction: row;
-      align-items: flex-start;
-      background-color: #f3f3f3;
-    }
-    .payroll-summary-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      min-width: 80px;
-    }
-    .payroll-form {
-      width: 100%;
-      box-sizing: border-box;
-    }
-    .row {
-      margin-bottom: 20px;
-    }
-    .summary-row {
-      display: flex;
-      align-items: center;
-      gap: 2rem;
-      margin-bottom: 20px;
-    }
-    .remark-inline {
-      display: flex;
-      align-items: center;
-      gap: 6rem;
-      margin-bottom: 20px;
-      flex-wrap: wrap;
-    }
-    .remark-inline input {
-      flex: 0 0 200px;
-      min-width: 200px;
-    }
-    .work-info {
-      display: flex;
-      gap: 6rem;
-      align-items: center;
-    }
-    .footer-actions {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 20px;
-      flex-wrap: wrap;
-      gap: 1rem;
-    }
-    .footer-left,
-    .footer-center,
-    .footer-right {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .footer-center {
-      justify-content: center;
-      flex: 1;
-    }
-    .back-button-row {
-      display: flex;
-      justify-content: center;
-      margin-top: 30px;
-    }
-    .back-button-row button {
-      padding: 8px 16px;
-      font-size: 14px;
-      background-color: #888;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
-    .back-button-row button:hover {
-      background-color: #555;
-    }
-    #saveComment {
-      text-align: center;
-      margin-top: 10px;
-      font-size: 0.95rem;
-      color: green;      
-    }
-    .blue-text {
-      color: #007bff;
-      font-weight: bold;
-    } 
-
+    .container { margin: 0 20px; }
+    .form-group { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 20px; }
+    .form-group select { min-width: 200px; }
+    .reference-btn { margin-left: 0.5rem; }
+    .payroll-table-wrapper { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+    .payroll-group { display: flex; gap: 1rem; padding: 10px; border: 2px solid #ccc; border-radius: 10px; flex-direction: row; align-items: flex-start; background-color: #f9f9f9; }
+    .payroll-item { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+    .payroll-item label { font-weight: bold; }
+    .payroll-item input { width: 70px; }
+    .payroll-summary-group { display: flex; gap: 1rem; padding: 10px; border: 2px solid #ccc; border-radius: 10px; background-color: #f3f3f3; }
+    .payroll-summary-item { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 80px; }
+    .payroll-form { width: 100%; box-sizing: border-box; }
+    .row { margin-bottom: 20px; }
+    .remark-inline { display: flex; align-items: center; gap: 6rem; margin-bottom: 20px; flex-wrap: wrap; }
+    .remark-inline input { flex: 0 0 200px; min-width: 200px; }
+    .work-info { display: flex; gap: 6rem; align-items: center; }
+    .footer-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 20px; flex-wrap: wrap; gap: 1rem; }
+    .footer-left, .footer-center, .footer-right { display: flex; align-items: center; gap: 0.5rem; }
+    .footer-center { justify-content: center; flex: 1; }
+    .back-button-row { display: flex; justify-content: center; margin-top: 30px; }
+    .back-button-row button { padding: 8px 16px; font-size: 14px; background-color: #888; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    .back-button-row button:hover { background-color: #555; }
+    #saveComment { text-align: center; margin-top: 10px; font-size: 0.95rem; color: green; }
+    .blue-text { color: #007bff; font-weight: bold; }
   </style>
 </head>
 <body class="payroll-page">
@@ -162,20 +39,19 @@
       <div class="row">
         <div class="form-group">
           <label for="name">Name :</label>
-          <select id="ep_ref" name="name">
+          <select id="ep_ref" name="name" onchange="updateReferenceInfo()">
             <option value="">-- Select Employee --</option>
             <% employees.forEach(emp => { %>
               <option value="<%= emp.name %>" data-eid="<%= emp.eid %>" data-jcode="<%= emp.jcode %>" data-jtitle="<%= emp.jtitle %>" data-work1="<%= emp.work1 %>"><%= emp.name %></option>
             <% }) %>
           </select>
-          <button type="button" onclick="setReference()" class="reference-btn">Reference</button>
-          <span id="eidDisplay" style="color: #007bff; font-weight: bold;"></span>
+          <span id="eidDisplay" class="blue-text"></span>
         </div>
       </div>
 
       <div class="row">
         <label for="pdate">Pay Date :</label>
-        <input type="date" name="pdate" id="pdate">
+        <input type="date" name="pdate" id="pdate" required>
       </div>
 
       <div class="payroll-table-wrapper">
@@ -231,6 +107,10 @@
         </div>
       </div>
       <div id="saveComment"></div>
+      <input type="hidden" name="eid" id="hiddenEid">
+      <input type="hidden" name="jcode" id="hiddenJcode">
+      <input type="hidden" name="jtitle" id="hiddenJtitle">
+      <input type="hidden" name="work1" id="hiddenWork1">
     </form>
     <div class="back-button-row">
       <button onclick="window.location.href='/payroll'">창 닫기</button>
@@ -238,74 +118,57 @@
   </div>
 
   <script>
-function setReference() {
-  const selected = document.querySelector('#ep_ref');
-  const eid = selected.options[selected.selectedIndex];
-  document.getElementById('eidDisplay').innerText = eid.getAttribute('data-eid') || '';
-  document.getElementById('jcodeDisplay').innerText = eid.getAttribute('data-jcode') || '';
-  document.getElementById('jtitleDisplay').innerText = eid.getAttribute('data-jtitle') || '';
-  document.getElementById('work1Display').innerText = eid.getAttribute('data-work1') || '';
-}
+    function updateReferenceInfo() {
+      const selected = document.querySelector('#ep_ref');
+      const option = selected.options[selected.selectedIndex];
 
-  function showSaveComment() {
-    const selected = document.querySelector('#ep_ref');
-    const name = selected.value;
-    const eid = selected.options[selected.selectedIndex].getAttribute('data-eid');
-    const commentBox = document.getElementById('saveComment');
-    commentBox.innerText = `eid: ${eid} / ${name} 이 지금 입력되었습니다.`;
-    return true;
-  }
+      const eidVal = option.getAttribute('data-eid') || '';
+      const jcodeVal = option.getAttribute('data-jcode') || '';
+      const jtitleVal = option.getAttribute('data-jtitle') || '';
+      const work1Val = option.getAttribute('data-work1') || '';
 
-  // ✅ Enter로 다음 필드 이동 기능
-  document.addEventListener('DOMContentLoaded', () => {
-    const fieldNames = [
-      'ckno_table', 'rtime', 'otime', 'dtime',
-      'fw', 'sse', 'me',
-      'caw', 'cade',
-      'adv', 'd1', 'dd',
-      'remark'
-    ];
+      document.getElementById('eidDisplay').innerText = eidVal;
+      document.getElementById('jcodeDisplay').innerText = jcodeVal;
+      document.getElementById('jtitleDisplay').innerText = jtitleVal;
+      document.getElementById('work1Display').innerText = work1Val;
 
-    const fields = fieldNames
-      .map(name => document.querySelector(`[name="${name}"]`))
-      .filter(el => el); // null 방지
-
-    fields.forEach((field, index) => {
-      field.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter') {
-          e.preventDefault(); // 기본 제출 방지
-          const next = fields[index + 1];
-          if (next) next.focus();
-        }
-      });
-    });
-  });
-
-  // 소수점 2자리까지만 입력되게 처리
-  function formatDecimal(input) {
-    let value = input.value;
-    // 숫자와 소수점 외 제거
-    value = value.replace(/[^\d.]/g, '');
-    // 소수점 1개만 유지
-    const parts = value.split('.');
-    if (parts.length > 2) {
-      value = parts[0] + '.' + parts[1];
+      document.getElementById('hiddenEid').value = eidVal;
+      document.getElementById('hiddenJcode').value = jcodeVal;
+      document.getElementById('hiddenJtitle').value = jtitleVal;
+      document.getElementById('hiddenWork1').value = work1Val;
     }
-    // 소수점 아래 두 자리까지 제한
-    if (parts[1]?.length > 2) {
-      value = parts[0] + '.' + parts[1].substring(0, 2);
-    }
-    input.value = value;
-  }
 
     function showSaveComment() {
       const selected = document.querySelector('#ep_ref');
       const name = selected.value;
-      const eid = selected.options[selected.selectedIndex].getAttribute('data-eid');
+      const eid = selected.options[selected.selectedIndex]?.getAttribute('data-eid') || '';
       const commentBox = document.getElementById('saveComment');
       commentBox.innerText = `eid: ${eid} / ${name} 이 지금 입력되었습니다.`;
       return true;
     }
+
+    function formatDecimal(input) {
+      let value = input.value;
+      value = value.replace(/[^\d.]/g, '');
+      const parts = value.split('.');
+      if (parts.length > 2) value = parts[0] + '.' + parts[1];
+      if (parts[1]?.length > 2) value = parts[0] + '.' + parts[1].substring(0, 2);
+      input.value = value;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const fieldNames = ['ckno_table', 'rtime', 'otime', 'dtime', 'fw', 'sse', 'me', 'caw', 'cade', 'adv', 'd1', 'dd', 'remark'];
+      const fields = fieldNames.map(name => document.querySelector(`[name="${name}"]`)).filter(el => el);
+      fields.forEach((field, index) => {
+        field.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            const next = fields[index + 1];
+            if (next) next.focus();
+          }
+        });
+      });
+    });
   </script>
 </body>
 </html>

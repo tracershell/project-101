@@ -6,6 +6,10 @@ const expressLayouts = require('express-ejs-layouts');
 
 const app = express();
 
+// 미들웨어 설정
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+
 // 세션 설정 (환경변수로 보안 강화) : 라우팅 보다 먼저 위치해야 함
 app.use(session({
   secret: process.env.SESSION_SECRET || 'defaultSecret',
@@ -16,17 +20,8 @@ app.use(session({
   //  }
 }));
 
-
-// 라우터 등록
-const authRoutes = require('./server/routes/auth');   // ./server/routes/auth.js 속에서  route.get, route.post, route.delete 를 주고 받을 수 있게
-const indexRoutes = require('./server/routes/index'); // ./server/routes/index.js 를 를 route.get, route.post, route.delete 를 주고 받을 수 있게
-const paylistRoutes = require('./server/routes/paylist');
-app.use('/', paylistRoutes);
-
-// 미들웨어 설정
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
-
+// 정적 파일 제공
+app.use(express.static(path.join(__dirname, 'public')));  // 정적파일 [현재 실행중인(server.js)디렉토리/public]
 
 // EJS 뷰 설정
 app.set('view engine', 'ejs');                      // view 엔진 : 확장자 ejs
@@ -36,12 +31,16 @@ app.use(expressLayouts);                             // 레이아웃 사용
 app.set('layout', 'layout');                         // 기본 레이아웃: layout.ejs
 
 
-// 정적 파일 제공
-app.use(express.static(path.join(__dirname, 'public')));  // 정적파일 [현재 실행중인(server.js)디렉토리/public]
+// 라우터 등록
+const authRoutes = require('./server/routes/auth');   // ./server/routes/auth.js 속에서  route.get, route.post, route.delete 를 주고 받을 수 있게
+const indexRoutes = require('./server/routes/index'); // ./server/routes/index.js 를 를 route.get, route.post, route.delete 를 주고 받을 수 있게
+const paylistRoutes = require('./server/routes/paylist');
+
 
 // 라우터 적용
 app.use('/', authRoutes);   // 인증 관련 라우트 우선
 app.use('/', indexRoutes);  // 일반 페이지 라우트
+app.use('/', paylistRoutes);
 
 // 서버 실행
 const PORT = process.env.PORT || 3000;
