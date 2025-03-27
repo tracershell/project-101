@@ -146,8 +146,13 @@
       text-align: center;
       margin-top: 10px;
       font-size: 0.95rem;
-      color: green;
+      color: green;      
     }
+    .blue-text {
+      color: #007bff;
+      font-weight: bold;
+    } 
+
   </style>
 </head>
 <body class="payroll-page">
@@ -164,6 +169,7 @@
             <% }) %>
           </select>
           <button type="button" onclick="setReference()" class="reference-btn">Reference</button>
+          <span id="eidDisplay" style="color: #007bff; font-weight: bold;"></span>
         </div>
       </div>
 
@@ -177,28 +183,23 @@
           <div class="payroll-item"><label>Check No.</label><input type="text" name="ckno_table"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>R.T</label><input type="number" name="rtime" value="0"></div>
-          <div class="payroll-item"><label>O.T</label><input type="number" name="otime" value="0"></div>
-          <div class="payroll-item"><label>D.T</label><input type="number" name="dtime" value="0"></div>
+          <div class="payroll-item"><label>R.T</label><input type="text" name="rtime" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>O.T</label><input type="text" name="otime" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>D.T</label><input type="text" name="dtime" value="0" oninput="formatDecimal(this)"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>FW</label><input type="number" name="fw" value="0"></div>
-          <div class="payroll-item"><label>SSE</label><input type="number" name="sse" value="0"></div>
-          <div class="payroll-item"><label>ME</label><input type="number" name="me" value="0"></div>
+          <div class="payroll-item"><label>FW</label><input type="text" name="fw" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>SSE</label><input type="text" name="sse" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>ME</label><input type="text" name="me" value="0" oninput="formatDecimal(this)"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>CA-W</label><input type="number" name="caw" value="0"></div>
-          <div class="payroll-item"><label>CA-de</label><input type="number" name="cade" value="0"></div>
+          <div class="payroll-item"><label>CA-W</label><input type="text" name="caw" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>CA-de</label><input type="text" name="cade" value="0" oninput="formatDecimal(this)"></div>
         </div>
         <div class="payroll-group">
-          <div class="payroll-item"><label>Adv</label><input type="number" name="adv" value="0"></div>
-          <div class="payroll-item"><label>D1</label><input type="number" name="d1" value="0"></div>
-          <div class="payroll-item"><label>D2</label><input type="number" name="dd" value="0"></div>
-        </div>
-        <div class="payroll-summary-group">
-          <div class="payroll-summary-item"><label>Gross</label><span id="grossAmount">000</span></div>
-          <div class="payroll-summary-item"><label>Tax</label><span id="taxAmount">000</span></div>
-          <div class="payroll-summary-item"><label>Net</label><span id="netAmount">$0.00</span></div>
+          <div class="payroll-item"><label>ADV.</label><input type="text" name="adv" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>C.S</label><input type="text" name="d1" value="0" oninput="formatDecimal(this)"></div>
+          <div class="payroll-item"><label>D.D</label><input type="text" name="dd" value="0" oninput="formatDecimal(this)"></div>
         </div>
       </div>
 
@@ -206,9 +207,9 @@
         <label for="remark">Remark :</label>
         <input type="text" name="remark" id="remark">
         <div class="work-info">
-          <span>W.code: <span id="jcodeDisplay"></span></span>
-          <span>W.title: <span id="jtitleDisplay"></span></span>
-          <span>W.location: <span id="work1Display"></span></span>
+          <span>W.code: <span id="jcodeDisplay" class="blue-text"></span></span>
+          <span>W.title: <span id="jtitleDisplay" class="blue-text"></span></span>
+          <span>W.location: <span id="work1Display" class="blue-text"></span></span>
         </div>
       </div>
 
@@ -237,13 +238,65 @@
   </div>
 
   <script>
-    function setReference() {
-      const selected = document.querySelector('#ep_ref');
-      const eid = selected.options[selected.selectedIndex];
-      document.getElementById('jcodeDisplay').innerText = eid.getAttribute('data-jcode') || '';
-      document.getElementById('jtitleDisplay').innerText = eid.getAttribute('data-jtitle') || '';
-      document.getElementById('work1Display').innerText = eid.getAttribute('data-work1') || '';
+function setReference() {
+  const selected = document.querySelector('#ep_ref');
+  const eid = selected.options[selected.selectedIndex];
+  document.getElementById('eidDisplay').innerText = eid.getAttribute('data-eid') || '';
+  document.getElementById('jcodeDisplay').innerText = eid.getAttribute('data-jcode') || '';
+  document.getElementById('jtitleDisplay').innerText = eid.getAttribute('data-jtitle') || '';
+  document.getElementById('work1Display').innerText = eid.getAttribute('data-work1') || '';
+}
+
+  function showSaveComment() {
+    const selected = document.querySelector('#ep_ref');
+    const name = selected.value;
+    const eid = selected.options[selected.selectedIndex].getAttribute('data-eid');
+    const commentBox = document.getElementById('saveComment');
+    commentBox.innerText = `eid: ${eid} / ${name} 이 지금 입력되었습니다.`;
+    return true;
+  }
+
+  // ✅ Enter로 다음 필드 이동 기능
+  document.addEventListener('DOMContentLoaded', () => {
+    const fieldNames = [
+      'ckno_table', 'rtime', 'otime', 'dtime',
+      'fw', 'sse', 'me',
+      'caw', 'cade',
+      'adv', 'd1', 'dd',
+      'remark'
+    ];
+
+    const fields = fieldNames
+      .map(name => document.querySelector(`[name="${name}"]`))
+      .filter(el => el); // null 방지
+
+    fields.forEach((field, index) => {
+      field.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault(); // 기본 제출 방지
+          const next = fields[index + 1];
+          if (next) next.focus();
+        }
+      });
+    });
+  });
+
+  // 소수점 2자리까지만 입력되게 처리
+  function formatDecimal(input) {
+    let value = input.value;
+    // 숫자와 소수점 외 제거
+    value = value.replace(/[^\d.]/g, '');
+    // 소수점 1개만 유지
+    const parts = value.split('.');
+    if (parts.length > 2) {
+      value = parts[0] + '.' + parts[1];
     }
+    // 소수점 아래 두 자리까지 제한
+    if (parts[1]?.length > 2) {
+      value = parts[0] + '.' + parts[1].substring(0, 2);
+    }
+    input.value = value;
+  }
 
     function showSaveComment() {
       const selected = document.querySelector('#ep_ref');
