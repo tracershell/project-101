@@ -2,40 +2,16 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db/mysql');
 
-/*
-// GET /paylist
-router.get('/paylist', (req, res) => {
-  if (!req.session.user) {
-    return res.redirect('/login');
-  }
-
-  const query = 'SELECT * FROM paylist ORDER BY pdate DESC, eid';
-
-  db.query(query, (err, results) => {
-    if (err) {
-      console.error('paylist 조회 오류:', err);
-      return res.status(500).send('급여 내역 조회 중 오류 발생');
-    }
-
-    res.render('paylist', {
-      layout: 'layout',
-      title: 'Pay List',
-      isAuthenticated: true,
-      name: req.session.user.name,
-      paylist: results
-    });
-  });
-});
-
-*/
+// 숫자 쉼표 제거 및 float 변환 유틸 함수
+function toNumber(value) {
+  return parseFloat(String(value).replace(/,/g, '')) || 0;
+}
 
 
-
-// GET /payroll - payroll.ejs 렌더링
+// GET: payroll form
 router.get('/payroll', (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
-  // active 상태인 직원 목록 가져오기 (콤보박스용)
   db.query('SELECT eid, name, jcode, jtitle, work1 FROM employees WHERE status = "active"', (err, results) => {
     if (err) return res.status(500).send('DB 오류');
 
@@ -51,39 +27,38 @@ router.get('/payroll', (req, res) => {
 });
 
 
-
-
-
+// POST: payroll 입력 저장
 router.post('/paylist/add', (req, res) => {
-  // 로그인 체크
-  if (!req.session.user) {
-    return res.redirect('/login');
- 
-  }
+  if (!req.session.user) return res.redirect('/login');
 
   const {
     name, pdate, ckno_table, rtime, otime, dtime,
     fw, sse, me, caw, cade,
-    adv, d1, dd,
-    remark
+    adv, d1, dd, remark,
+    eid, jcode, jtitle, work1
   } = req.body;
 
-  const eid = req.body.eid || ''; // HTML에서 전달 받은 eid
-  const jcode = req.body.jcode || '';
-  const jtitle = req.body.jtitle || '';
-  const work1 = req.body.work1 || '';
+  // 쉼표 제거 및 숫자 변환 처리
+  const rtimeNum = toNumber(rtime);
+  const otimeNum = toNumber(otime);
+  const dtimeNum = toNumber(dtime);
+  const fwNum = toNumber(fw);
+  const sseNum = toNumber(sse);
+  const meNum = toNumber(me);
+  const cawNum = toNumber(caw);
+  const cadeNum = toNumber(cade);
+  const advNum = toNumber(adv);
+  const d1Num = toNumber(d1);
+  const ddNum = toNumber(dd);
 
-  const gross = parseFloat(rtime || 0) + parseFloat(otime || 0) + parseFloat(dtime || 0);
-  const tax = gross * 0.15;
+  const gross = rtimeNum + otimeNum + dtimeNum;
+  const tax = fwNum + sseNum + meNum + cawNum + cadeNum;
   const net = gross - tax;
 
-  // 날짜 + eid로 중복 체크 (예: 동일 날짜에 동일 직원 중복 입력 방지)
+  // 날짜 + eid 중복 확인
   const checkQuery = 'SELECT COUNT(*) AS count FROM paylist WHERE eid = ? AND pdate = ?';
   db.query(checkQuery, [eid, pdate], (err, results) => {
-    if (err) {
-      console.error('중복 확인 오류:', err);
-      return res.status(500).send('중복 확인 중 오류 발생');
-    }
+    if (err) return res.status(500).send('중복 확인 오류');
 
     if (results[0].count > 0) {
       return res.send(`
@@ -94,7 +69,6 @@ router.post('/paylist/add', (req, res) => {
       `);
     }
 
-    // 중복 없으면 INSERT
     const insertQuery = `
       INSERT INTO paylist (
         eid, name, jcode, jtitle, work1,
@@ -108,24 +82,23 @@ router.post('/paylist/add', (req, res) => {
 
     const values = [
       eid, name, jcode, jtitle, work1,
-      pdate, ckno_table, rtime, otime, dtime,
-      fw, sse, me, caw, cade,
-      adv, d1, dd,
+      pdate, ckno_table, rtimeNum, otimeNum, dtimeNum,
+      fwNum, sseNum, meNum, cawNum, cadeNum,
+      advNum, d1Num, ddNum,
       gross.toFixed(2), tax.toFixed(2), net.toFixed(2),
       remark
     ];
 
-    db.query(insertQuery, values, (err, result) => {
+    db.query(insertQuery, values, (err) => {
       if (err) {
         console.error('paylist 저장 오류:', err);
         return res.status(500).send('급여 정보 저장 중 오류 발생');
       }
 
-      res.redirect('/payroll'); // 목록 페이지로 이동
+      res.redirect('/payroll');
     });
   });
 });
-
 
 
 
