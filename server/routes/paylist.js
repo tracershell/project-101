@@ -15,12 +15,16 @@ router.get('/payroll', (req, res) => {
   db.query('SELECT eid, name, jcode, jtitle, work1 FROM employees WHERE status = "active"', (err, results) => {
     if (err) return res.status(500).send('DB 오류');
 
+    const selectedPdate = req.session.lastPayDate || ''; // 세션에서 paydate 불러오기
+    delete req.session.lastPayDate; // 1회용으로 삭제
+
     res.render('payroll', {
       layout: 'layout',
       title: 'Payroll Management',
       isAuthenticated: true,
       name: req.session.user.name,
       employees: results,
+      selectedPdate,                                   // 🟢 이 값을 EJS에 넘겨줘야 오류가 안 납니다
       now: new Date().toString()
     });
   });
@@ -37,6 +41,9 @@ router.post('/paylist/add', (req, res) => {
     adv, d1, dd, remark,
     eid, jcode, jtitle, work1
   } = req.body;
+
+  req.session.lastPayDate = pdate; // pay date 세션에 저장
+
 
   // 쉼표 제거 및 숫자 변환 처리
   const rtimeNum = toNumber(rtime);
