@@ -101,5 +101,32 @@ router.post('/paylist/add', (req, res) => {
 });
 
 
+// GET /paylist/latest?eid=xxx
+router.get('/paylist/latest', (req, res) => {
+  const eid = req.query.eid;
+  if (!eid) return res.json({ success: false, message: 'eid 누락' });
+
+  const sql = `
+    SELECT rtime, otime, dtime, fw, sse, me, caw, cade, adv, csp AS d1, dd
+    FROM paylist
+    WHERE eid = ?
+    ORDER BY pdate DESC
+    LIMIT 1
+  `;
+
+  db.query(sql, [eid], (err, results) => {
+    if (err) {
+      console.error('paylist 최신 데이터 조회 오류:', err);
+      return res.json({ success: false });
+    }
+    if (results.length === 0) {
+      return res.json({ success: false });
+    }
+
+    res.json({ success: true, ...results[0] });
+  });
+});
+
+
 
 module.exports = router;

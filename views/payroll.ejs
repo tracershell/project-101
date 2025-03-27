@@ -42,11 +42,15 @@
           <select id="ep_ref" name="name" onchange="updateReferenceInfo()">
             <option value="">-- Select Employee --</option>
             <% employees.forEach(emp => { %>
-              <option value="<%= emp.name %>" data-eid="<%= emp.eid %>" data-jcode="<%= emp.jcode %>" data-jtitle="<%= emp.jtitle %>" data-work1="<%= emp.work1 %>"><%= emp.name %></option>
+              <option value="<%= emp.name %>" data-eid="<%= emp.eid %>" data-jcode="<%= emp.jcode %>" data-jtitle="<%= emp.jtitle %>" data-work1="<%= emp.work1 %>">
+                <%= emp.name %>
+              </option>
             <% }) %>
           </select>
+          <button type="button" onclick="loadLatestPaylist()" class="reference-btn">Reference</button>
           <span id="eidDisplay" class="blue-text"></span>
         </div>
+         
       </div>
 
       <div class="row">
@@ -145,6 +149,40 @@
       document.getElementById('hiddenJtitle').value = jtitleVal;
       document.getElementById('hiddenWork1').value = work1Val;
     }
+
+    function loadLatestPaylist() {
+    const selected = document.querySelector('#ep_ref');
+    const eid = selected.options[selected.selectedIndex]?.getAttribute('data-eid');
+
+    if (!eid) {
+      alert('직원을 선택하세요.');
+      return;
+    }
+
+    fetch(`/paylist/latest?eid=${eid}`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data || !data.success) {
+          alert('최근 급여 데이터를 찾을 수 없습니다.');
+          return;
+        }
+
+        const fields = ['rtime', 'otime', 'dtime', 'fw', 'sse', 'me', 'caw', 'cade', 'adv', 'd1', 'dd'];
+        fields.forEach(field => {
+          if (data[field] !== undefined) {
+            document.querySelector(`[name="${field}"]`).value = parseFloat(data[field]).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
+          }
+        });
+        calculateNet();
+      })
+      .catch(err => {
+        console.error('Reference 불러오기 오류:', err);
+        alert('데이터를 불러오는 중 오류가 발생했습니다.');
+      });
+  }
 
     function showSaveComment() {
       const selected = document.querySelector('#ep_ref');
