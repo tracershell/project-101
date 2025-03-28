@@ -119,7 +119,7 @@ router.get('/payroll/paylist/latest', (req, res) => {
   if (!eid) return res.json({ success: false, message: 'eid 누락' });
 
   const sql = `
-    SELECT rtime, otime, dtime, fw, sse, me, caw, cade, adv, csp AS d1, dd
+    SELECT rtime, otime, dtime, fw, sse, me, caw, cade, adv, csp AS d1, dd, remark
     FROM paylist
     WHERE eid = ?
     ORDER BY pdate DESC

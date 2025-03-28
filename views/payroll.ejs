@@ -167,7 +167,7 @@
     return;
   }
 
-  fetch(`/payroll/paylist/latest?eid=${eid}`)  // ✅ 백틱 사용
+  fetch(`/payroll/paylist/latest?eid=${eid}`)
     .then(res => res.json())
     .then(data => {
       if (!data || !data.success) {
@@ -175,15 +175,20 @@
         return;
       }
 
-      const fields = ['rtime', 'otime', 'dtime', 'fw', 'sse', 'me', 'caw', 'cade', 'adv', 'd1', 'dd'];
+      const fields = ['rtime', 'otime', 'dtime', 'fw', 'sse', 'me', 'caw', 'cade', 'adv', 'd1', 'dd', 'remark'];
       fields.forEach(field => {
         if (data[field] !== undefined) {
-          document.querySelector(`[name="${field}"]`).value = parseFloat(data[field]).toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2
-          });
+          if (field === 'remark') {
+            document.querySelector(`[name="${field}"]`).value = data[field];  // 그냥 문자열 처리
+          } else {
+            document.querySelector(`[name="${field}"]`).value = parseFloat(data[field]).toLocaleString('en-US', {
+              minimumFractionDigits: 2,
+              maximumFractionDigits: 2
+            });
+          }
         }
       });
+
       calculateNet();
     })
     .catch(err => {
@@ -191,6 +196,7 @@
       alert('데이터를 불러오는 중 오류가 발생했습니다.');
     });
 }
+
 function showSaveComment() {
   const selected = document.querySelector('#ep_ref');
   const name = selected.value;
