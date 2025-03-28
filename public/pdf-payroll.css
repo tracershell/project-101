@@ -1,4 +1,37 @@
-body { font-family: Arial, sans-serif; padding: 20px; }
-h2 { text-align: center; }
-table { width: 100%; border-collapse: collapse; font-size: 12px; }
-th, td { border: 1px solid #999; text-align: center; padding: 4px; }
+@media print {
+    body {
+      margin: 0.5cm;              /* ✅ 여백 줄이기 */
+      font-family: Arial, sans-serif;
+      font-size: 10pt;
+    }
+  
+    .date-top-right {
+      text-align: right;
+      font-size: 8pt;
+      color: #333;
+      margin-bottom: 0.2cm;
+    }
+  
+    h2 {
+      text-align: center;
+      font-size: 14pt;
+      margin-bottom: 0.5cm;
+    }
+  
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 9pt;
+    }
+  
+    th, td {
+      border: 1px solid black;
+      padding: 4px;
+      text-align: center;
+    }
+  
+    thead {
+      background-color: #eee;
+    }
+  }
+  

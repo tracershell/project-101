@@ -113,7 +113,7 @@
           <button type="button">수정</button>
           <button type="button">삭제</button>
         </div>
-        <div class="footer-center">
+        <div class="footer-center">AC
           <input type="date" name="selectedDate">
           <button type="button" class="view-btn">보기</button>
           <button type="button" class="print-btn">출력</button>
@@ -266,7 +266,7 @@ function calculateNet() {
       });
     });
 
-// 출력용 Javascript 함수
+/* 출력용 Javascript 함수
 function viewPaylistPDF() {
   const date = document.getElementById('selectedDate').value;
   if (!date) {
@@ -275,6 +275,18 @@ function viewPaylistPDF() {
   }
   window.open(`/payroll/pdf-view?pdate=${date}`, '_blank');
 }
+*/
+
+
+
+function viewPaylistPDF() {
+  const date = document.getElementById('selectedDate').value;
+  if (!date) {
+    alert("날짜를 선택하세요.");
+    return;
+  }
+  window.open(`/payroll/pdf-generate?pdate=${date}`, '_blank');
+}
 
 function printPaylistPDF() {
   const date = document.getElementById('selectedDate').value;
@@ -282,9 +294,8 @@ function printPaylistPDF() {
     alert("날짜를 선택하세요.");
     return;
   }
-  window.open(`/payroll/pdf-print?pdate=${date}`, '_blank');
-}
-
+  window.open(`/payroll/pdf-generate?pdate=${date}`, '_blank');
+} 
 
   </script>
 </body>

@@ -19,7 +19,7 @@ router.get('/payroll', (req, res) => {
     const selectedEidName = req.session.lastEidName || '';  // post 로 넘겨 받은 eid, name 세션을 get router 에서 상수화 (아래쪽 render 에 넘긴다)
     delete req.session.lastPayDate;                           // 1회성으로 사용 후 삭제 (상수로 일단 아래로, 세션은 삭제)
     delete req.session.lastEidName;                           // 1회성으로 사용 후 삭제  (상수로 일단 아래로, 세션은 삭제)      
-    
+
 
     res.render('payroll', {
       layout: 'layout',
