@@ -10,14 +10,14 @@ const headers = [
 ];
 
 const colWidths = [
-  30, 100, 40, 45, 45, 45,
-  40, 40, 40,
-  40, 40, 40,
-  40, 40,
-  45, 45, 48
+  30, 100, 40,
+  48, 48, 48,   // R.Time, O.Time, D.Time
+  40, 40, 40,   // FIT, S.S, Med
+  40, 40, 40,   // CAT, CAD, ADV
+  40, 40,       // CSP, PDD
+  48, 40, 48    // Gross, Tax, Net
 ];
 
-// 숫자 포맷 함수 (쉼표 + 소수점 2자리)
 const formatNumber = (value) => {
   if (value === null || value === undefined || isNaN(value)) return '';
   return Number(value).toLocaleString(undefined, {
@@ -66,13 +66,18 @@ router.get('/payroll/pdf-generate', (req, res) => {
       let x = startX;
       rowData.forEach((value, i) => {
         const isNameColumn = i === 1;
-        const isNumberColumn = !isHeader && i > 2; // i > 2 = 숫자만
-        const paddingX = isNameColumn ? 3 : 0;
-        const paddingRight = isNumberColumn ? 6 : 0;
+        const isNumberColumn = !isHeader && i > 2;
 
+        // CK# (i === 2) 도 가운데 정렬로 처리
         const align = isHeader
           ? 'center'
-          : (i === 0 ? 'center' : isNumberColumn ? 'right' : 'left');
+          : (
+            i === 0 || i === 2
+              ? 'center'
+              : isNumberColumn
+                ? 'right'
+                : 'left'
+          );
 
         const text = isHeader
           ? value
@@ -82,12 +87,8 @@ router.get('/payroll/pdf-generate', (req, res) => {
               ? formatNumber(value)
               : String(value));
 
-        const textX = isNumberColumn
-          ? x + colWidths[i] - paddingRight
-          : x + paddingX;
-
-        doc.text(text, textX, y + 3, {
-          width: colWidths[i] - paddingX,
+        doc.text(text, x + 2, y + 3, {
+          width: colWidths[i] - 4,
           height: rowHeight,
           align,
           lineBreak: false
@@ -98,10 +99,8 @@ router.get('/payroll/pdf-generate', (req, res) => {
       });
     };
 
-    // 헤더 출력
     drawRow(headers, startY, true);
 
-    // 데이터 출력 (remark 필드 제외)
     results.forEach((row, rowIndex) => {
       const y = startY + rowHeight * (rowIndex + 1);
       const rowData = [
