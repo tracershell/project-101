@@ -11,11 +11,11 @@ const headers = [
 
 const colWidths = [
   30, 100, 40,
-  48, 48, 48,   // R.Time, O.Time, D.Time
-  40, 40, 40,   // FIT, S.S, Med
-  40, 40, 40,   // CAT, CAD, ADV
-  40, 40,       // CSP, PDD
-  48, 40, 48    // Gross, Tax, Net
+  48, 48, 48,
+  40, 40, 40,
+  40, 40, 40,
+  40, 40,
+  48, 40, 48
 ];
 
 const formatNumber = (value) => {
@@ -52,55 +52,73 @@ router.get('/payroll/pdf-generate', (req, res) => {
     }
 
     const startX = 15;
-    const startY = 100;
+    const startY = 80;
     const rowHeight = 14;
 
-    doc.fontSize(14).text(`Payroll Report – ${pdate}`, {
-      align: 'center'
-    });
+    const formattedDate = new Date(results[0].pdate).toLocaleDateString('en-US');
+    doc.fontSize(9).text(`Date: ${formattedDate}`, 530, startY - 15, { align: 'right' });
+
+    doc.fontSize(14).text(`Payroll Report`, 0, startY - 35, { align: 'center' });
 
     doc.fontSize(8);
     doc.lineWidth(0.5);
 
-    const drawRow = (rowData, y, isHeader = false) => {
+    // ✅ drawRow 함수 (PDD 제거 + Bold 지원)
+    const drawRow = (rowData, y, isHeader = false, isBoldRow = false, skipPDD = false) => {
       let x = startX;
-      rowData.forEach((value, i) => {
-        const isNameColumn = i === 1;
-        const isNumberColumn = !isHeader && i > 2;
 
-        // CK# (i === 2) 도 가운데 정렬로 처리
-        const align = isHeader
-          ? 'center'
-          : (
-            i === 0 || i === 2
+      doc.font(isBoldRow ? 'Helvetica-Bold' : 'Helvetica');
+
+      rowData.forEach((value, i) => {
+        const skip = (!isHeader && value === '') || (skipPDD && i === 13);
+        const colWidth = colWidths[i];
+
+        if (!skip) {
+          const isNumberColumn = !isHeader && i > 2;
+
+          const align = isHeader
+            ? 'center'
+            : (i === 0 || i === 2
               ? 'center'
               : isNumberColumn
                 ? 'right'
-                : 'left'
-          );
+                : 'left');
 
-        const text = isHeader
-          ? value
-          : (i === 0
-            ? parseInt(value)
-            : isNumberColumn
-              ? formatNumber(value)
-              : String(value));
+          const text = isHeader
+            ? value
+            : (i === 0
+              ? parseInt(value)
+              : isNumberColumn
+                ? formatNumber(value)
+                : String(value));
 
-        doc.text(text, x + 2, y + 3, {
-          width: colWidths[i] - 4,
-          height: rowHeight,
-          align,
-          lineBreak: false
-        });
+          doc.text(text, x + 2, y + 3, {
+            width: colWidth - 4,
+            height: rowHeight,
+            align,
+            lineBreak: false
+          });
 
-        doc.rect(x, y, colWidths[i], rowHeight).stroke();
+          doc.rect(x, y, colWidth, rowHeight).stroke();
+        }
+
         x += colWidths[i];
       });
     };
 
+    // ✅ 외곽선만 굵게 그리는 함수
+    const drawTableBorder = (rowCount) => {
+      const totalHeight = rowHeight * (rowCount + 1); // 헤더 + 데이터 + 합계
+      const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
+      doc.lineWidth(1.0);
+      doc.rect(startX, startY, totalWidth, totalHeight).stroke();
+      doc.lineWidth(0.5); // 다시 원래대로 복원
+    };
+
+    // 헤더 출력
     drawRow(headers, startY, true);
 
+    // 데이터 출력
     results.forEach((row, rowIndex) => {
       const y = startY + rowHeight * (rowIndex + 1);
       const rowData = [
@@ -110,6 +128,27 @@ router.get('/payroll/pdf-generate', (req, res) => {
       ];
       drawRow(rowData, y);
     });
+
+    // 합계 계산
+    let grossTotal = 0, taxTotal = 0, netTotal = 0;
+    results.forEach(row => {
+      grossTotal += parseFloat(row.gross || 0);
+      taxTotal += parseFloat(row.tax || 0);
+      netTotal += parseFloat(row.net || 0);
+    });
+
+    // 합계 행
+    const totalRowY = startY + rowHeight * (results.length + 1);
+    const totalRow = new Array(headers.length).fill('');
+    totalRow[13] = 'Total:';           // PDD 자리에 Total:
+    totalRow[14] = grossTotal;
+    totalRow[15] = taxTotal;
+    totalRow[16] = netTotal;
+
+    drawRow(totalRow, totalRowY, false, true, true); // Bold + PDD 스킵
+
+    // ✅ 표 외곽선 그리기
+    drawTableBorder(results.length + 1); // +1 = 합계 행 포함
 
     doc.end();
   });
