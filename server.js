@@ -38,6 +38,7 @@ const paylistRoutes = require('./server/routes/paylist');
 // const payroll_printRoutes = require('./server/routes/payroll_print');
 const payrollPdfKitRoutes = require('./server/routes/payroll_pdfkit');
 const paylistCvsRoutes = require('./server/routes/paylist_cvs'); // CVS 로 paylist 출력 라우터터
+const paylistCvsDbRoutes = require('./server/routes/paylist_cvs_db'); // CVS 로 paylist 출력 라우터터
 const testRoutes01 = require('./server/routes/test01');   // .server/routes/test01.js 를 등록
 const testRoutes02 = require('./server/routes/test02');   // .server/routes/test02.js 를 등록
 const testRoutes03 = require('./server/routes/test03');   // .server/routes/test03.js 를 등록
@@ -51,6 +52,7 @@ app.use('/', paylistRoutes);
 // app.use('/', payroll_printRoutes); // 급여명세서 관련 라우트
 app.use('/', payrollPdfKitRoutes);
 app.use('/', paylistCvsRoutes); // 급여명세서 CSV 다운로드 라우트
+app.use('/', paylistCvsDbRoutes); // 급여명세서 CSV 다운로드 라우트
 app.use('/', testRoutes01);   // test01.js 라우트 사용
 app.use('/', testRoutes02);   // test02.js 라우트 사용
 app.use('/', testRoutes03);   // test03.js 라우트 사용

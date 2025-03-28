@@ -137,6 +137,23 @@
     </div>
   </div>
 
+<hr style="margin: 40px 0; border: none; height: 2px; background-color: #666;">
+  <!-- 화면 중간에 가로 선 추가 -->
+<hr style="margin: 40px 0; border: 1px solid #999;">
+<div style="text-align: center; margin: 40px 0;">
+  // 구문 텍스트 입력
+  <hr style="border: none; border-top: 2px solid #ccc;">
+  <span style="position: relative; top: -14px; background: #fff; padding: 0 10px; font-weight: bold;">CSV Import</span>
+</div>
+<!-- 그 아래 CSV 업로드 박스 -->
+<div class="row" style="margin-bottom: 30px; border: 2px dashed #ccc; padding: 20px;">
+  <form id="uploadForm" enctype="multipart/form-data" method="POST" action="/paylist/upload-csv">
+    <label style="font-weight: bold;">CSV 파일 업로드:</label>
+    <input type="file" name="csvfile" accept=".csv" required>
+    <button type="submit">실행</button>
+  </form>
+</div>
+
   <script>
     function updateReferenceInfo() {
       const selected = document.querySelector('#ep_ref');
