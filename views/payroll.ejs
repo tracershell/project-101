@@ -153,7 +153,20 @@
     <button type="submit">실행</button>
   </form>
 </div>
+<!-- 화면 중간 선 DBF file insert -->
+<hr style="border: none; border-top: 2px solid #ccc;">
+<div style="text-align: center; margin: 40px 0;">
+  <span style="position: relative; top: -14px; background: #fff; padding: 0 10px; font-weight: bold;">DBF Import</span>
+</div>
 
+<!-- DBF 업로드 박스 -->
+<div class="row" style="margin-bottom: 30px; border: 2px dashed #666; padding: 20px;">
+  <form id="uploadDbfForm" enctype="multipart/form-data" method="POST" action="/paylist/upload-dbf">
+    <label style="font-weight: bold;">DBF 파일 업로드:</label>
+    <input type="file" name="dbffile" accept=".dbf" required>
+    <button type="submit">실행</button>
+  </form>
+</div>
   <script>
     function updateReferenceInfo() {
       const selected = document.querySelector('#ep_ref');

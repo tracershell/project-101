@@ -39,11 +39,13 @@ const paylistRoutes = require('./server/routes/paylist');
 const payrollPdfKitRoutes = require('./server/routes/payroll_pdfkit');
 const paylistCvsRoutes = require('./server/routes/paylist_cvs'); // CVS 로 paylist 출력 라우터터
 const paylistCvsDbRoutes = require('./server/routes/paylist_cvs_db'); // CVS 로 paylist 출력 라우터터
+const paylistDbfDbRoutes = require('./server/routes/paylist_dbf_db'); // CVS 로 paylist 출력 라우터터
 const testRoutes01 = require('./server/routes/test01');   // .server/routes/test01.js 를 등록
 const testRoutes02 = require('./server/routes/test02');   // .server/routes/test02.js 를 등록
 const testRoutes03 = require('./server/routes/test03');   // .server/routes/test03.js 를 등록
 const testRoutes04 = require('./server/routes/test04');   // .server/routes/test04.js 를 등록
 const testRoutes05 = require('./server/routes/test05');   // .server/routes/test05.js 를 등록
+const import_anRoutes = require('./server/routes/import_an'); // CVS 로 paylist 출력 라우터터
 
 // 라우터 적용
 app.use('/', authRoutes);   // 인증 관련 라우트 우선
@@ -53,11 +55,13 @@ app.use('/', paylistRoutes);
 app.use('/', payrollPdfKitRoutes);
 app.use('/', paylistCvsRoutes); // 급여명세서 CSV 다운로드 라우트
 app.use('/', paylistCvsDbRoutes); // 급여명세서 CSV 다운로드 라우트
+app.use('/', paylistDbfDbRoutes); // 급여명세서 CSV 다운로드 라우트
 app.use('/', testRoutes01);   // test01.js 라우트 사용
 app.use('/', testRoutes02);   // test02.js 라우트 사용
 app.use('/', testRoutes03);   // test03.js 라우트 사용
 app.use('/', testRoutes04);   // test04.js 라우트 사용
 app.use('/', testRoutes05);   // test05.js 라우트 사용
+app.use('/', import_anRoutes);   // test05.js 라우트 사용
 
 
 // 서버 실행

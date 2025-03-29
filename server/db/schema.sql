@@ -40,27 +40,6 @@ CREATE TABLE paylist (
 );
 
 
-CREATE TABLE employees (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  status VARCHAR(10),
-  eid VARCHAR(10),
-  name VARCHAR(60),
-  ss VARCHAR(20),
-  birth DATE,
-  email VARCHAR(60),
-  phone VARCHAR(20),
-  jcode VARCHAR(10),
-  jtitle VARCHAR(60),
-  sdate DATE,
-  edate DATE,
-  sick INT,
-  work1 VARCHAR(20),
-  address VARCHAR(100),
-  city VARCHAR(50),
-  state VARCHAR(50),
-  zip VARCHAR(20),
-  remark TEXT
-);
 
 
 
@@ -82,4 +61,29 @@ CREATE TABLE employees (
   state VARCHAR(50),
   zip VARCHAR(20),
   remark TEXT
+);
+
+
+CREATE TABLE po (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  podate DATE,
+  pono VARCHAR(50) UNIQUE,
+  style VARCHAR(100),
+  pcs INT,
+  price DECIMAL(10,2),
+  poamount DECIMAL(10,2), -- pcs * price
+  note TEXT,
+  remain DECIMAL(10,2) DEFAULT 0
+);
+
+
+CREATE TABLE popayment (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  po_id INT,
+  paydate DATE,
+  paytype ENUM('partial', 'full'),
+  exrate DECIMAL(10,4),
+  payamount DECIMAL(10,2),
+  note TEXT,
+  FOREIGN KEY (po_id) REFERENCES po(id)
 );
