@@ -90,6 +90,15 @@ router.post('/import_an/delete/:id', async (req, res) => {
   }
 });
 
+// 화면에 입력한 값을 세션에 저장해 두고 여러 건을 이어서 결제할 수 있게 하기 위해서입니다.
+
+router.post('/popayment/setPayInfo', (req, res) => {
+  const { paydate, exrate } = req.body;
+  req.session.paydate = paydate;
+  req.session.exrate = exrate;
+  res.redirect('/import_an');  // 다시 PO 결제 화면으로
+});
+
 // 30% 선수금 지급 처리
 router.post('/import_an/pay30', async (req, res) => {
   const { po_id, paydate, exrate } = req.body;

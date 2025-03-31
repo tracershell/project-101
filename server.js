@@ -46,6 +46,7 @@ const testRoutes03 = require('./server/routes/test03');   // .server/routes/test
 const testRoutes04 = require('./server/routes/test04');   // .server/routes/test04.js 를 등록
 const testRoutes05 = require('./server/routes/test05');   // .server/routes/test05.js 를 등록
 const import_anRoutes = require('./server/routes/import_an'); // CVS 로 paylist 출력 라우터터
+const import_an_paymentRoutes = require('./server/routes/import_an_payment'); // CVS 로 paylist 출력 라우터터
 
 // 라우터 적용
 app.use('/', authRoutes);   // 인증 관련 라우트 우선
@@ -61,9 +62,8 @@ app.use('/', testRoutes02);   // test02.js 라우트 사용
 app.use('/', testRoutes03);   // test03.js 라우트 사용
 app.use('/', testRoutes04);   // test04.js 라우트 사용
 app.use('/', testRoutes05);   // test05.js 라우트 사용
-app.use('/', import_anRoutes);   // test05.js 라우트 사용
-
-
+app.use('/', import_anRoutes);   // 
+app.use('/', import_an_paymentRoutes);   // 
 // 서버 실행
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

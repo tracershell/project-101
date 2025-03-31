@@ -29,8 +29,8 @@
   <label>날짜: <input type="date" name="podate" required></label>
   <label>PO 번호: <input type="text" name="pono" required></label>
   <label>스타일: <input type="text" name="style" required></label>
-  <label>수량: <input type="number" name="pcs" required></label>
-  <label>단가: <input type="number" name="price" step="0.01" required></label>
+  <label>수량: <input type="number" name="pcs" step="any" required></label>
+  <label>단가: <input type="number" name="price" step="any" required></label>
   <button type="submit">등록</button>
 </form>
 
@@ -74,7 +74,24 @@
 </table>
 
 <h2>📋 PO 결제 관리</h2>
+<!-- ✅ 다른 화면에서 결제 기록 보기 -->
 
+<div style="margin: 30px 0;">
+  <h4>📅 결제 기록 보기</h4>
+
+  <!-- 전체 결제 보기 -->
+  <form method="GET" action="/popayment/history/all" style="display: inline-block; margin-right: 20px;">
+    <button type="submit">전체 결제 보기</button>
+  </form>
+
+  <!-- 선택 날짜 결제 보기 -->
+  <form method="GET" action="/popayment/history/bydate" style="display: inline-block;">
+    <label>날짜 선택:
+      <input type="date" name="paydate" required>
+    </label>
+    <button type="submit">선택날짜 결제 보기</button>
+  </form>
+</div>
 <!-- ✅ 필터 -->
 <form method="GET" action="/import_an">
   <label>
@@ -157,3 +174,34 @@
 
 </body>
 </html>
+
+<script>
+  const dateInput = document.querySelector('input[name="podate"]');
+
+  // 페이지 로드 시 이전 값 불러오기
+  window.addEventListener('DOMContentLoaded', () => {
+    const savedDate = localStorage.getItem('poDate');
+    if (savedDate && dateInput) {
+      dateInput.value = savedDate;
+    }
+  });
+
+  // 날짜 입력 시 저장
+  dateInput?.addEventListener('change', () => {
+    localStorage.setItem('poDate', dateInput.value);
+  });
+
+  // 수량, 단가 입력칸 step 화살표 제거
+  /* Chrome, Safari, Edge, Opera */
+  // input[type=number]::-webkit-inner-spin-button,
+  // input[type=number]::-webkit-outer-spin-button {
+  //   -webkit-appearance: none;
+  //   margin: 0;
+  // }
+
+  // /* Firefox */
+  // input[type=number] {
+  //   -moz-appearance: textfield;
+  // }
+
+</script>
