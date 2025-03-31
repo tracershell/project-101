@@ -5,19 +5,26 @@ const db = require('../db/mysql');
 // PO 목록 조회
 router.get('/import_an', (req, res) => {
   const { filter } = req.query;
+
+  // 기본 쿼리
   let query = 'SELECT * FROM po ORDER BY podate DESC';
-  if (filter === 'unpaid') query = 'SELECT * FROM po WHERE remain > 0 ORDER BY podate DESC';
-  else if (filter === 'paid') query = 'SELECT * FROM po WHERE remain = 0 ORDER BY podate DESC';
+  if (filter === 'unpaid') {
+    query = 'SELECT * FROM po WHERE remain > 0 ORDER BY podate DESC';
+  } else if (filter === 'paid') {
+    query = 'SELECT * FROM po WHERE remain = 0 ORDER BY podate DESC';
+  }
 
   db.query(query, (err, results) => {
     if (err) return res.status(500).send('PO 조회 오류');
+
     res.render('import_an', {
       layout: 'layout',
       title: 'PO 관리',
       isAuthenticated: req.session.user ? true : false,
       name: req.session.user?.name || '',
       poList: results,
-      now: new Date().toString()
+      now: new Date().toString(),
+      filter // 💡 filter 값을 EJS로 전달
     });
   });
 });
@@ -165,5 +172,45 @@ router.get('/import_an/export/excel', async (req, res) => {
   });
 });
 
+
+router.post('/popayment/deposit', async (req, res) => {
+  try {
+    const { po_id, amount } = req.body;
+
+    // 문자열 → 숫자 변환
+    const payAmount = parseFloat(amount);
+
+    // 결제일과 환율은 세션에서 가져옴
+    const paydate = req.session.paydate;
+    const exrate = parseFloat(req.session.exrate);
+
+    if (!paydate || !exrate) {
+      return res.send('결제일 또는 환율이 누락되었습니다. 먼저 입력해주세요.');
+    }
+
+    // 해당 PO 가져오기
+    const [[po]] = await db.query('SELECT * FROM po WHERE id = ?', [po_id]);
+    if (!po) return res.status(404).send('해당 PO를 찾을 수 없습니다.');
+
+    // 결제 기록 삽입
+    await db.query(`
+      INSERT INTO popayment (po_id, paydate, paytype, exrate, payamount, note)
+      VALUES (?, ?, 'partial', ?, ?, '30% paid')
+    `, [po_id, paydate, exrate, payAmount]);
+
+    // remain 업데이트
+    const newRemain = po.remain - payAmount;
+    const note = newRemain <= 0 ? 'full paid' : '30% paid';
+
+    await db.query('UPDATE po SET remain = ?, note = ? WHERE id = ?', [
+      newRemain, note, po_id
+    ]);
+
+    res.redirect('/import_an');
+  } catch (err) {
+    console.error('30% 결제 처리 중 오류:', err);
+    res.status(500).send('서버 오류가 발생했습니다.');
+  }
+});
 
 module.exports = router;

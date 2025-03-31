@@ -1,85 +1,97 @@
-<h2>신규 PO 등록</h2>
-<form action="/import_an/add" method="POST" style="margin-bottom: 30px;">
-  <label>PO Date:</label>
-  <input type="date" name="podate" required>
-  <label>PO No:</label>
-  <input type="text" name="pono" required>
-  <label>Style:</label>
-  <input type="text" name="style" required>
-  <label>PCS:</label>
-  <input type="number" name="pcs" required>
-  <label>Price:</label>
-  <input type="number" name="price" required>
-  <label>Note:</label>
-  <input type="text" name="note">
-  <button type="submit">입력</button>
-</form>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>PO 결제 관리</title>
+  <style>
+    table { width: 100%; border-collapse: collapse; margin-bottom: 20px; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f4f4f4; }
+    .paid { background-color: #e0ffe0; }
+    .unpaid { background-color: #ffe0e0; }
+    .form-section { margin-top: 30px; padding: 15px; border: 1px solid #aaa; border-radius: 6px; }
+  </style>
+</head>
+<body>
+  <h2>📋 PO 결제 관리</h2>
 
-<h2>PO 목록</h2>
-<div style="margin-bottom: 10px;">
-  <form action="/import_an/export/pdf" method="GET" target="_blank" style="display:inline-block;">
-    <button type="submit">📄 PDF 내보내기</button>
+  <!-- ✅ 필터 -->
+  <form method="GET" action="/import_an">
+    <label>
+      <input type="checkbox" name="filter" value="unpaid" <% if (filter === 'unpaid') { %>checked<% } %> >
+      잔금 남은 PO만 보기
+    </label>
+    <label>
+      <input type="checkbox" name="filter" value="paid" <% if (filter === 'paid') { %>checked<% } %> >
+      결제 완료된 PO만 보기
+    </label>
+    <button type="submit">필터 적용</button>
   </form>
-  <form action="/import_an/export/excel" method="GET" target="_blank" style="display:inline-block;">
-    <button type="submit">📊 Excel 내보내기</button>
-  </form>
-</div>
-<div style="margin-bottom: 10px;">
-  <a href="/import_an">전체</a> |
-  <a href="/import_an?filter=unpaid">잔금 남은 PO</a> |
-  <a href="/import_an?filter=paid">완납된 PO</a>
-</div>
 
-<style>
-  table.po-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-  }
-  table.po-table th,
-  table.po-table td {
-    border: 1px solid #ccc;
-    padding: 6px;
-    text-align: center;
-  }
-</style>
+  <!-- ✅ PO 목록 -->
+  <table>
+    <thead>
+      <tr>
+        <th>날짜</th>
+        <th>PO 번호</th>
+        <th>Style</th>
+        <th>수량</th>
+        <th>단가</th>
+        <th>총액</th>
+        <th>잔금</th>
+        <th>비고</th>
+        <th>선수금</th>
+        <th>잔금 결제</th>
+        <th>결제 기록</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% poList.forEach(po => { %>
+        <tr class="<%= po.remain === 0 ? 'paid' : 'unpaid' %>">
+          <td><%= po.podate %></td>
+          <td><%= po.pono %></td>
+          <td><%= po.style %></td>
+          <td><%= po.pcs %></td>
+          <td><%= po.price %></td>
+          <td><%= po.poamount %></td>
+          <td><%= po.remain %></td>
+          <td><%= po.note || '-' %></td>
+          <td>
+            <% if (po.remain > 0 && po.poamount * 0.3 <= po.remain) { %>
+              <form method="POST" action="/popayment/deposit">
+                <input type="hidden" name="po_id" value="<%= po.id %>">
+                <input type="hidden" name="amount" value="<%= (po.poamount * 0.3).toFixed(2) %>">
+                <button type="submit">30% 결제</button>
+              </form>
+            <% } else { %>완료<% } %>
+          </td>
+          <td>
+            <% if (po.remain > 0 && po.poamount * 0.3 > po.remain) { %>
+              <form method="POST" action="/popayment/final">
+                <input type="hidden" name="po_id" value="<%= po.id %>">
+                <input type="number" name="pcs" value="<%= po.pcs %>" placeholder="수정 수량" required>
+                <input type="number" name="price" value="<%= po.price %>" placeholder="수정 단가" step="0.01" required>
+                <button type="submit">잔금 결제</button>
+              </form>
+            <% } else { %>-<% } %>
+          </td>
+          <td>
+            <form method="GET" action="/popayment/history/<%= po.id %>">
+              <button type="submit">🔍</button>
+            </form>
+          </td>
+        </tr>
+      <% }); %>
+    </tbody>
+  </table>
 
-<table class="po-table">
-  <tr>
-    <th>PO Date</th><th>PO No</th><th>Style</th><th>PCS</th><th>Price</th>
-    <th>Amount</th><th>Remain</th><th>Note</th><th>30% 지급 / 잔금 지급</th>
-  </tr>
-  <% poList.forEach(po => { %>
-    <tr>
-      <td><%= new Date(po.podate).toLocaleDateString('en-US') %></td>
-      <td><%= po.pono %></td>
-      <td><%= po.style %></td>
-      <td><%= po.pcs %></td>
-      <td><%= Number(po.price).toFixed(2) %></td>
-      <td><%= Number(po.poamount).toFixed(2) %></td>
-      <td><%= Number(po.remain).toFixed(2) %></td>
-      <td><%= po.note %></td>
-      <td>
-        <% if (po.note !== '30% paid') { %>
-          <form action="/import_an/pay30" method="POST" style="margin-bottom: 10px;">
-            <input type="hidden" name="po_id" value="<%= po.id %>">
-            <input type="date" name="paydate" required>
-            <input type="number" name="exrate" placeholder="환율" required>
-            <button type="submit">30% 지급</button>
-          </form>
-        <% } %>
-
-        <% if (po.note === '30% paid' && po.remain > 0) { %>
-          <form action="/import_an/payfinal" method="POST">
-            <input type="hidden" name="po_id" value="<%= po.id %>">
-            <input type="number" name="pcs" value="<%= po.pcs %>">
-            <input type="number" name="price" value="<%= po.price %>">
-            <input type="date" name="paydate" required>
-            <input type="number" name="exrate" placeholder="환율" required>
-            <button type="submit">잔금 지급</button>
-          </form>
-        <% } %>
-      </td>
-    </tr>
-  <% }) %>
-</table>
+  <!-- ✅ 결제 일자 및 환율 입력 영역 -->
+  <div class="form-section">
+    <h4>결제 정보 입력</h4>
+    <form method="POST" action="/popayment/setPayInfo">
+      <label>결제일: <input type="date" name="paydate" required></label>
+      <label>환율(USD → KRW): <input type="number" name="exrate" step="0.0001" required></label>
+      <button type="submit">입력 적용</button>
+    </form>
+  </div>
+</body>
+</html>
