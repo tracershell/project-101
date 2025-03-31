@@ -72,7 +72,15 @@
     <% }); %>
   </tbody>
 </table>
-
+<!-- ✅ 결제 일자 및 환율 입력 영역 -->
+<div class="form-section">
+  <h4>결제 정보 입력</h4>
+  <form method="POST" action="/popayment/setPayInfo">
+    <label>결제일: <input type="date" name="paydate" required></label>
+    <label>환율(USD → KRW): <input type="number" name="exrate" step="0.0001" required></label>
+    <button type="submit">입력 적용</button>
+  </form>
+</div>
 <h2>📋 PO 결제 관리</h2>
 <!-- ✅ 다른 화면에서 결제 기록 보기 -->
 
@@ -134,25 +142,31 @@
         <td><%= po.remain %></td>
         <td><%= po.note || '-' %></td>
         <td>
-          <% if (po.remain > 0 && po.poamount * 0.3 <= po.remain) { %>
-            <form method="POST" action="/popayment/deposit">
-              <input type="hidden" name="po_id" value="<%= po.id %>">
-              <input type="hidden" name="amount" value="<%= (po.poamount * 0.3).toFixed(2) %>">
-              <button type="submit">30% 결제</button>
-            </form>
-          <% } else { %>완료<% } %>
-        </td>
-        <td>
-          <% if (po.remain > 0) { %>
-            <form method="POST" action="/popayment/final">
-              <input type="hidden" name="po_id" value="<%= po.id %>">
-              <input type="hidden" name="amount" value="<%= po.remain %>">
-              <button type="submit">잔금 결제</button>
-            </form>
-          <% } else { %>
-            완료
-          <% } %>
-        </td>
+          <td>
+            <% if (!po.deposit_paid && po.remain > 0 && po.poamount * 0.3 <= po.remain) { %>
+              <form method="POST" action="/popayment/deposit">
+                <input type="hidden" name="po_id" value="<%= po.id %>">
+                <input type="hidden" name="amount" value="<%= (po.poamount * 0.3).toFixed(2) %>">
+                <button type="submit">30% 결제</button>
+              </form>
+            <% } else { %>
+              완료
+            <% } %>
+          </td>
+          <td>
+            <% if (po.deposit_paid && po.remain > 0) { %>
+              <form method="POST" action="/popayment/final">
+                <input type="hidden" name="po_id" value="<%= po.id %>">
+                <input type="number" name="pcs" value="<%= po.pcs %>" required>
+                <input type="number" name="price" value="<%= po.price %>" step="0.01" required>
+                <button type="submit">잔금 결제</button>
+              </form>
+            <% } else if (po.remain === 0) { %>
+              완료
+            <% } else { %>
+              -
+            <% } %>
+          </td>
         
         <td>
           <form method="GET" action="/popayment/history/<%= po.id %>">
@@ -163,16 +177,6 @@
     <% }); %>
   </tbody>
 </table>
-
-<!-- ✅ 결제 일자 및 환율 입력 영역 -->
-<div class="form-section">
-  <h4>결제 정보 입력</h4>
-  <form method="POST" action="/popayment/setPayInfo">
-    <label>결제일: <input type="date" name="paydate" required></label>
-    <label>환율(USD → KRW): <input type="number" name="exrate" step="0.0001" required></label>
-    <button type="submit">입력 적용</button>
-  </form>
-</div>
 
 </body>
 </html>

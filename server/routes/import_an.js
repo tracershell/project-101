@@ -188,18 +188,68 @@ router.post('/popayment/deposit', async (req, res) => {
     const paydate = req.session.paydate;
     const exrate = parseFloat(req.session.exrate);
     if (!paydate || !exrate) return res.send('결제일 또는 환율이 누락되었습니다. 먼저 입력해주세요.');
+    
     const [[po]] = await db.query('SELECT * FROM po WHERE id = ?', [po_id]);
     if (!po) return res.status(404).send('해당 PO를 찾을 수 없습니다.');
-    await db.query(`INSERT INTO popayment (po_id, paydate, paytype, exrate, payamount, note) VALUES (?, ?, 'partial', ?, ?, '30% paid')`,
-      [po_id, paydate, exrate, payAmount]);
+
+    // 결제 기록 저장
+    await db.query(`
+      INSERT INTO popayment (po_id, paydate, paytype, exrate, payamount, note)
+      VALUES (?, ?, 'deposit', ?, ?, '30% paid')
+    `, [po_id, paydate, exrate, payAmount]);
+
     const newRemain = po.remain - payAmount;
     const note = newRemain <= 0 ? 'full paid' : '30% paid';
-    await db.query('UPDATE po SET remain = ?, note = ? WHERE id = ?', [newRemain, note, po_id]);
+
+    // ✅ deposit_paid도 함께 업데이트
+    await db.query(`
+      UPDATE po SET remain = ?, note = ?, deposit_paid = 1 WHERE id = ?
+    `, [newRemain, note, po_id]);
+
     res.redirect('/import_an');
   } catch (err) {
     console.error('30% 결제 처리 중 오류:', err);
     res.status(500).send('서버 오류가 발생했습니다.');
   }
 });
+
+router.post('/popayment/final', async (req, res) => {
+  try {
+    const { po_id, pcs, price } = req.body;
+    const paydate = req.session.paydate;
+    const exrate = parseFloat(req.session.exrate);
+
+    if (!paydate || !exrate) {
+      return res.status(400).send('결제일과 환율 정보를 먼저 입력하세요.');
+    }
+
+    const finalAmount = parseFloat(pcs) * parseFloat(price);
+    const [[{ total_paid }]] = await db.query(
+      'SELECT SUM(payamount) AS total_paid FROM popayment WHERE po_id = ?',
+      [po_id]
+    );
+    const alreadyPaid = parseFloat(total_paid || 0);
+    const remainAmount = finalAmount - alreadyPaid;
+
+    // 결제 기록 추가
+    await db.query(`
+      INSERT INTO popayment (po_id, paydate, paytype, exrate, payamount, note)
+      VALUES (?, ?, 'final', ?, ?, '잔금 결제')
+    `, [po_id, paydate, exrate, remainAmount]);
+
+    // PO 정보 업데이트
+    await db.query(`
+      UPDATE po
+      SET pcs = ?, price = ?, poamount = ?, remain = 0, note = 'full paid'
+      WHERE id = ?
+    `, [pcs, price, finalAmount, po_id]);
+
+    res.redirect('/import_an');
+  } catch (err) {
+    console.error('잔금 결제 오류:', err);
+    res.status(500).send('잔금 결제 처리 중 오류가 발생했습니다.');
+  }
+});
+
 
 module.exports = router;

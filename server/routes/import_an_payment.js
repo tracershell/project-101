@@ -60,5 +60,54 @@ router.get('/popayment/history/all', async (req, res) => {
     }
   });
   
+  router.post('/final', async (req, res) => {
+    const { po_id, amount } = req.body;
+    const paydate = req.session.paydate;
+    const exrate = req.session.exrate;
   
+    // 실제 결제 로직
+    await connection.query(`
+      INSERT INTO popayment (po_id, payamount, paydate, exrate, paytype)
+      VALUES (?, ?, ?, ?, '잔금')
+    `, [po_id, amount, paydate, exrate]);
+  
+    // 잔금 0 으로 업데이트
+    await connection.query(`UPDATE purchase_order SET remain = 0 WHERE id = ?`, [po_id]);
+  
+    res.redirect('/import_an');
+  });
+  
+
+  // router.post('/deposit', async (req, res) => {
+  //   try {
+  //     const { po_id, amount } = req.body;
+  //     const paydate = req.session.paydate;
+  //     const exrate = req.session.exrate;
+  
+  //     if (!paydate || !exrate) {
+  //       return res.status(400).send('결제일과 환율 정보가 없습니다. 먼저 결제 정보를 입력하세요.');
+  //     }
+  
+  //     // 1. 결제 기록 추가
+  //     await connection.query(`
+  //       INSERT INTO popayment (po_id, payamount, paydate, exrate, paytype)
+  //       VALUES (?, ?, ?, ?, 'deposit')
+  //     `, [po_id, amount, paydate, exrate]);
+  
+  //     // 2. 잔금 차감 + deposit_paid 설정
+  //     await connection.query(`
+  //       UPDATE po
+  //       SET remain = remain - ?, deposit_paid = 1
+  //       WHERE id = ?
+  //     `, [amount, po_id]);
+  
+  //     res.redirect('/import_an');
+  //   } catch (error) {
+  //     console.error('30% 결제 처리 중 오류:', error);
+  //     res.status(500).send('30% 결제 처리 중 서버 오류가 발생했습니다.');
+  //   }
+  // });
+
+ 
+
   module.exports = router;
