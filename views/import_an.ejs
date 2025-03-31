@@ -143,15 +143,17 @@
           <% } else { %>완료<% } %>
         </td>
         <td>
-          <% if (po.remain > 0 && po.poamount * 0.3 > po.remain) { %>
+          <% if (po.remain > 0) { %>
             <form method="POST" action="/popayment/final">
               <input type="hidden" name="po_id" value="<%= po.id %>">
-              <input type="number" name="pcs" value="<%= po.pcs %>" placeholder="수정 수량" required>
-              <input type="number" name="price" value="<%= po.price %>" placeholder="수정 단가" step="0.01" required>
+              <input type="hidden" name="amount" value="<%= po.remain %>">
               <button type="submit">잔금 결제</button>
             </form>
-          <% } else { %>-<% } %>
+          <% } else { %>
+            완료
+          <% } %>
         </td>
+        
         <td>
           <form method="GET" action="/popayment/history/<%= po.id %>">
             <button type="submit">🔍</button>

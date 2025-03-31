@@ -20,6 +20,13 @@ app.use(session({
   //  }
 }));
 
+// isAuthenticated 변수가 뷰(view)에 전달, name 도 전달달
+app.use((req, res, next) => {
+  res.locals.isAuthenticated = req.session && req.session.user ? true : false;
+  res.locals.name = req.session.user ? req.session.user.name : ''; // 사용자 이름
+  next();
+});
+
 // 정적 파일 제공
 app.use(express.static(path.join(__dirname, 'public')));  // 정적파일 [현재 실행중인(server.js)디렉토리/public]
 
