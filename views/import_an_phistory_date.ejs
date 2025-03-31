@@ -9,10 +9,17 @@
     th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
     th { background-color: #f2f2f2; }
     tr:nth-child(even) { background-color: #fafafa; }
+    tfoot td { font-weight: bold; background-color: #f9f9f9; }
   </style>
 </head>
 <body>
   <h3><%= title %></h3>
+
+  <% 
+    let totalUsd = 0;
+    let totalKrw = 0;
+  %>
+
   <table>
     <thead>
       <tr>
@@ -36,6 +43,8 @@
         const usdAmount = parseFloat(p.payamount).toFixed(2);
         const rate = parseFloat(p.exrate).toFixed(4);
         const krwAmount = (p.payamount * p.exrate).toFixed(2);
+        totalUsd += parseFloat(usdAmount);
+        totalKrw += parseFloat(krwAmount);
       %>
         <tr>
           <td><%= formattedDate %></td>
@@ -49,6 +58,15 @@
         </tr>
       <% }) %>
     </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">합계</td>
+        <td><%= totalUsd.toFixed(2) %></td>
+        <td></td>
+        <td><%= totalKrw.toFixed(2) %></td>
+        <td></td>
+      </tr>
+    </tfoot>
   </table>
 
   <div style="margin-top: 20px;">
