@@ -215,7 +215,7 @@ router.post('/popayment/deposit', async (req, res) => {
 
 router.post('/popayment/final', async (req, res) => {
   try {
-    const { po_id, pcs, price } = req.body;
+    const { po_id, payamount } = req.body;
     const paydate = req.session.paydate;
     const exrate = parseFloat(req.session.exrate);
 
@@ -223,26 +223,23 @@ router.post('/popayment/final', async (req, res) => {
       return res.status(400).send('결제일과 환율 정보를 먼저 입력하세요.');
     }
 
-    const finalAmount = parseFloat(pcs) * parseFloat(price);
-    const [[{ total_paid }]] = await db.query(
-      'SELECT SUM(payamount) AS total_paid FROM popayment WHERE po_id = ?',
-      [po_id]
-    );
-    const alreadyPaid = parseFloat(total_paid || 0);
-    const remainAmount = finalAmount - alreadyPaid;
+    const payAmt = parseFloat(payamount);
+    if (isNaN(payAmt) || payAmt <= 0) {
+      return res.status(400).send('잔금 금액이 유효하지 않습니다.');
+    }
 
-    // 결제 기록 추가
+    // 결제 내역 저장
     await db.query(`
       INSERT INTO popayment (po_id, paydate, paytype, exrate, payamount, note)
       VALUES (?, ?, 'final', ?, ?, '잔금 결제')
-    `, [po_id, paydate, exrate, remainAmount]);
+    `, [po_id, paydate, exrate, payAmt]);
 
-    // PO 정보 업데이트
+    // PO 상태 업데이트
     await db.query(`
       UPDATE po
-      SET pcs = ?, price = ?, poamount = ?, remain = 0, note = 'full paid'
+      SET remain = 0, note = 'full paid'
       WHERE id = ?
-    `, [pcs, price, finalAmount, po_id]);
+    `, [po_id]);
 
     res.redirect('/import_an');
   } catch (err) {
@@ -250,6 +247,5 @@ router.post('/popayment/final', async (req, res) => {
     res.status(500).send('잔금 결제 처리 중 오류가 발생했습니다.');
   }
 });
-
 
 module.exports = router;

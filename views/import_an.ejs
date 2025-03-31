@@ -142,7 +142,6 @@
         <td><%= po.remain %></td>
         <td><%= po.note || '-' %></td>
         <td>
-          <td>
             <% if (!po.deposit_paid && po.remain > 0 && po.poamount * 0.3 <= po.remain) { %>
               <form method="POST" action="/popayment/deposit">
                 <input type="hidden" name="po_id" value="<%= po.id %>">
@@ -152,13 +151,12 @@
             <% } else { %>
               완료
             <% } %>
-          </td>
+        </td>
           <td>
             <% if (po.deposit_paid && po.remain > 0) { %>
               <form method="POST" action="/popayment/final">
                 <input type="hidden" name="po_id" value="<%= po.id %>">
-                <input type="number" name="pcs" value="<%= po.pcs %>" required>
-                <input type="number" name="price" value="<%= po.price %>" step="0.01" required>
+                <input type="hidden" name="payamount" value="<%= po.remain %>">
                 <button type="submit">잔금 결제</button>
               </form>
             <% } else if (po.remain === 0) { %>
