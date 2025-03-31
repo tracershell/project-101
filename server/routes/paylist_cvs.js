@@ -3,14 +3,14 @@ const router = express.Router();
 const db = require('../db/mysql');
 const { format } = require('@fast-csv/format');
 
-router.get('/payroll/csv-export', (req, res) => {
+router.get('/payroll/csv-export', async (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   const pdate = req.query.pdate;
   if (!pdate) return res.status(400).send('날짜가 없습니다.');
 
-  db.query('SELECT * FROM paylist WHERE pdate = ?', [pdate], (err, results) => {
-    if (err) return res.status(500).send('DB 오류');
+  try {
+    const [results] = await db.query('SELECT * FROM paylist WHERE pdate = ?', [pdate]);
 
     res.setHeader('Content-Disposition', `attachment; filename=paylist-${pdate}.csv`);
     res.setHeader('Content-Type', 'text/csv');
@@ -37,13 +37,15 @@ router.get('/payroll/csv-export', (req, res) => {
         Gross: row.gross,
         Tax: row.tax,
         Net: row.net,
-        Remark: row.remark // ✅ 마지막에 remark 추가
+        Remark: row.remark
       });
     });
 
     csvStream.end();
-  });
+  } catch (err) {
+    console.error('CSV export error:', err);
+    res.status(500).send('DB 오류');
+  }
 });
-
 
 module.exports = router;

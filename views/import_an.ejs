@@ -12,86 +12,148 @@
   </style>
 </head>
 <body>
-  <h2>📋 PO 결제 관리</h2>
 
-  <!-- ✅ 필터 -->
-  <form method="GET" action="/import_an">
-    <label>
-      <input type="checkbox" name="filter" value="unpaid" <% if (filter === 'unpaid') { %>checked<% } %> >
-      잔금 남은 PO만 보기
-    </label>
-    <label>
-      <input type="checkbox" name="filter" value="paid" <% if (filter === 'paid') { %>checked<% } %> >
-      결제 완료된 PO만 보기
-    </label>
-    <button type="submit">필터 적용</button>
-  </form>
+<%
+  // 날짜를 MM/DD/YYYY 형식으로 포맷하는 함수
+  function formatDate(date) {
+    const d = new Date(date);
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
+    const yyyy = d.getFullYear();
+    return `${mm}/${dd}/${yyyy}`;
+  }
+%>
 
-  <!-- ✅ PO 목록 -->
-  <table>
-    <thead>
+<h3>📌 신규 PO 등록</h3>
+<form method="POST" action="/import_an/add" style="margin-bottom: 20px;">
+  <label>날짜: <input type="date" name="podate" required></label>
+  <label>PO 번호: <input type="text" name="pono" required></label>
+  <label>스타일: <input type="text" name="style" required></label>
+  <label>수량: <input type="number" name="pcs" required></label>
+  <label>단가: <input type="number" name="price" step="0.01" required></label>
+  <button type="submit">등록</button>
+</form>
+
+<!-- ✅ 수정, 삭제 부분 -->
+<table>
+  <thead>
+    <tr>
+      <th>날짜</th>
+      <th>PO 번호</th>
+      <th>Style</th>
+      <th>수량</th>
+      <th>단가</th>
+      <th>총액</th>
+      <th>잔금</th>
+      <th>비고</th>
+      <th>기능</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% poList.forEach(po => { %>
       <tr>
-        <th>날짜</th>
-        <th>PO 번호</th>
-        <th>Style</th>
-        <th>수량</th>
-        <th>단가</th>
-        <th>총액</th>
-        <th>잔금</th>
-        <th>비고</th>
-        <th>선수금</th>
-        <th>잔금 결제</th>
-        <th>결제 기록</th>
+        <td><%= formatDate(po.podate) %></td>
+        <td><%= po.pono %></td>
+        <td><%= po.style %></td>
+        <td><%= po.pcs %></td>
+        <td><%= po.price %></td>
+        <td><%= po.poamount %></td>
+        <td><%= po.remain %></td>
+        <td><%= po.note || '-' %></td>
+        <td>
+          <form method="GET" action="/import_an/edit/<%= po.id %>" style="display:inline;">
+            <button type="submit">수정</button>
+          </form>
+          <form method="POST" action="/import_an/delete/<%= po.id %>" onsubmit="return confirm('정말 삭제하시겠습니까?');" style="display:inline;">
+            <button type="submit">삭제</button>
+          </form>
+        </td>
       </tr>
-    </thead>
-    <tbody>
-      <% poList.forEach(po => { %>
-        <tr class="<%= po.remain === 0 ? 'paid' : 'unpaid' %>">
-          <td><%= po.podate %></td>
-          <td><%= po.pono %></td>
-          <td><%= po.style %></td>
-          <td><%= po.pcs %></td>
-          <td><%= po.price %></td>
-          <td><%= po.poamount %></td>
-          <td><%= po.remain %></td>
-          <td><%= po.note || '-' %></td>
-          <td>
-            <% if (po.remain > 0 && po.poamount * 0.3 <= po.remain) { %>
-              <form method="POST" action="/popayment/deposit">
-                <input type="hidden" name="po_id" value="<%= po.id %>">
-                <input type="hidden" name="amount" value="<%= (po.poamount * 0.3).toFixed(2) %>">
-                <button type="submit">30% 결제</button>
-              </form>
-            <% } else { %>완료<% } %>
-          </td>
-          <td>
-            <% if (po.remain > 0 && po.poamount * 0.3 > po.remain) { %>
-              <form method="POST" action="/popayment/final">
-                <input type="hidden" name="po_id" value="<%= po.id %>">
-                <input type="number" name="pcs" value="<%= po.pcs %>" placeholder="수정 수량" required>
-                <input type="number" name="price" value="<%= po.price %>" placeholder="수정 단가" step="0.01" required>
-                <button type="submit">잔금 결제</button>
-              </form>
-            <% } else { %>-<% } %>
-          </td>
-          <td>
-            <form method="GET" action="/popayment/history/<%= po.id %>">
-              <button type="submit">🔍</button>
-            </form>
-          </td>
-        </tr>
-      <% }); %>
-    </tbody>
-  </table>
+    <% }); %>
+  </tbody>
+</table>
 
-  <!-- ✅ 결제 일자 및 환율 입력 영역 -->
-  <div class="form-section">
-    <h4>결제 정보 입력</h4>
-    <form method="POST" action="/popayment/setPayInfo">
-      <label>결제일: <input type="date" name="paydate" required></label>
-      <label>환율(USD → KRW): <input type="number" name="exrate" step="0.0001" required></label>
-      <button type="submit">입력 적용</button>
-    </form>
-  </div>
+<h2>📋 PO 결제 관리</h2>
+
+<!-- ✅ 필터 -->
+<form method="GET" action="/import_an">
+  <label>
+    <input type="checkbox" name="filter" value="unpaid" <% if (filter === 'unpaid') { %>checked<% } %> >
+    잔금 남은 PO만 보기
+  </label>
+  <label>
+    <input type="checkbox" name="filter" value="paid" <% if (filter === 'paid') { %>checked<% } %> >
+    결제 완료된 PO만 보기
+  </label>
+  <button type="submit">필터 적용</button>
+</form>
+
+<!-- ✅ PO 목록 -->
+<table>
+  <thead>
+    <tr>
+      <th>날짜</th>
+      <th>PO 번호</th>
+      <th>Style</th>
+      <th>수량</th>
+      <th>단가</th>
+      <th>총액</th>
+      <th>잔금</th>
+      <th>비고</th>
+      <th>선수금</th>
+      <th>잔금 결제</th>
+      <th>결제 기록</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% poList.forEach(po => { %>
+      <tr class="<%= po.remain === 0 ? 'paid' : 'unpaid' %>">
+        <td><%= formatDate(po.podate) %></td>
+        <td><%= po.pono %></td>
+        <td><%= po.style %></td>
+        <td><%= po.pcs %></td>
+        <td><%= po.price %></td>
+        <td><%= po.poamount %></td>
+        <td><%= po.remain %></td>
+        <td><%= po.note || '-' %></td>
+        <td>
+          <% if (po.remain > 0 && po.poamount * 0.3 <= po.remain) { %>
+            <form method="POST" action="/popayment/deposit">
+              <input type="hidden" name="po_id" value="<%= po.id %>">
+              <input type="hidden" name="amount" value="<%= (po.poamount * 0.3).toFixed(2) %>">
+              <button type="submit">30% 결제</button>
+            </form>
+          <% } else { %>완료<% } %>
+        </td>
+        <td>
+          <% if (po.remain > 0 && po.poamount * 0.3 > po.remain) { %>
+            <form method="POST" action="/popayment/final">
+              <input type="hidden" name="po_id" value="<%= po.id %>">
+              <input type="number" name="pcs" value="<%= po.pcs %>" placeholder="수정 수량" required>
+              <input type="number" name="price" value="<%= po.price %>" placeholder="수정 단가" step="0.01" required>
+              <button type="submit">잔금 결제</button>
+            </form>
+          <% } else { %>-<% } %>
+        </td>
+        <td>
+          <form method="GET" action="/popayment/history/<%= po.id %>">
+            <button type="submit">🔍</button>
+          </form>
+        </td>
+      </tr>
+    <% }); %>
+  </tbody>
+</table>
+
+<!-- ✅ 결제 일자 및 환율 입력 영역 -->
+<div class="form-section">
+  <h4>결제 정보 입력</h4>
+  <form method="POST" action="/popayment/setPayInfo">
+    <label>결제일: <input type="date" name="paydate" required></label>
+    <label>환율(USD → KRW): <input type="number" name="exrate" step="0.0001" required></label>
+    <button type="submit">입력 적용</button>
+  </form>
+</div>
+
 </body>
 </html>

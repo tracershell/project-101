@@ -12,14 +12,12 @@ router.post('/paylist/upload-dbf', upload.single('dbffile'), async (req, res) =>
   if (!req.file) return res.status(400).send('DBF 파일이 업로드되지 않았습니다.');
 
   const filePath = path.resolve(req.file.path);
+
   try {
     const dbf = await DBFFile.open(filePath);
     const records = await dbf.readRecords();
 
-    const results = [];
-
-    for (const row of records) {
-      // 여기서 컬럼명은 DBF 구조에 맞게 수정하세요
+    const results = records.map(row => {
       const rtime = parseFloat(row.RTIME) || 0;
       const otime = parseFloat(row.OTIME) || 0;
       const dtime = parseFloat(row.DTIME) || 0;
@@ -36,7 +34,7 @@ router.post('/paylist/upload-dbf', upload.single('dbffile'), async (req, res) =>
       const tax = fw + sse + me + caw + cade;
       const net = gross - tax;
 
-      results.push([
+      return [
         row.EID, row.NAME, row.JCODE, row.JTITLE, row.WORK1,
         row.PDATE, row.CKNO,
         rtime, otime, dtime,
@@ -44,10 +42,9 @@ router.post('/paylist/upload-dbf', upload.single('dbffile'), async (req, res) =>
         adv, d1, dd,
         gross.toFixed(2), tax.toFixed(2), net.toFixed(2),
         row.REMARK || ''
-      ]);
-    }
+      ];
+    });
 
-    // Insert into DB
     const insertQuery = `
       INSERT INTO paylist (
         eid, name, jcode, jtitle, work1,
@@ -60,16 +57,11 @@ router.post('/paylist/upload-dbf', upload.single('dbffile'), async (req, res) =>
       ) VALUES ?
     `;
 
-    db.query(insertQuery, [results], (err) => {
-      fs.unlink(filePath, () => {});
-      if (err) {
-        console.error('DB 저장 오류:', err);
-        return res.status(500).send('DBF 저장 중 오류 발생');
-      }
-      res.redirect('/payroll');
-    });
-
+    await db.query(insertQuery, [results]);
+    fs.unlink(filePath, () => {});
+    res.redirect('/payroll');
   } catch (err) {
+    fs.unlink(filePath, () => {});
     console.error('DBF 처리 중 오류:', err);
     res.status(500).send('DBF 처리 중 오류 발생');
   }

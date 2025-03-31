@@ -26,14 +26,14 @@ const formatNumber = (value) => {
   });
 };
 
-router.get('/payroll/pdf-generate', (req, res) => {
+router.get('/payroll/pdf-generate', async (req, res) => {
   if (!req.session.user) return res.redirect('/login');
 
   const pdate = req.query.pdate;
   if (!pdate) return res.status(400).send('날짜가 없습니다.');
 
-  db.query('SELECT * FROM paylist WHERE pdate = ?', [pdate], (err, results) => {
-    if (err) return res.status(500).send('DB 오류');
+  try {
+    const [results] = await db.query('SELECT * FROM paylist WHERE pdate = ?', [pdate]);
 
     const doc = new PDFDocument({
       margin: 5,
@@ -57,16 +57,12 @@ router.get('/payroll/pdf-generate', (req, res) => {
 
     const formattedDate = new Date(results[0].pdate).toLocaleDateString('en-US');
     doc.fontSize(9).text(`Date: ${formattedDate}`, 530, startY - 15, { align: 'right' });
-
     doc.fontSize(14).text(`Payroll Report`, 0, startY - 35, { align: 'center' });
-
     doc.fontSize(8);
     doc.lineWidth(0.5);
 
-    // ✅ drawRow 함수 (PDD 제거 + Bold 지원)
     const drawRow = (rowData, y, isHeader = false, isBoldRow = false, skipPDD = false) => {
       let x = startX;
-
       doc.font(isBoldRow ? 'Helvetica-Bold' : 'Helvetica');
 
       rowData.forEach((value, i) => {
@@ -106,19 +102,16 @@ router.get('/payroll/pdf-generate', (req, res) => {
       });
     };
 
-    // ✅ 외곽선만 굵게 그리는 함수
     const drawTableBorder = (rowCount) => {
-      const totalHeight = rowHeight * (rowCount + 1); // 헤더 + 데이터 + 합계
+      const totalHeight = rowHeight * (rowCount + 1);
       const totalWidth = colWidths.reduce((sum, w) => sum + w, 0);
       doc.lineWidth(1.0);
       doc.rect(startX, startY, totalWidth, totalHeight).stroke();
-      doc.lineWidth(0.5); // 다시 원래대로 복원
+      doc.lineWidth(0.5);
     };
 
-    // 헤더 출력
     drawRow(headers, startY, true);
 
-    // 데이터 출력
     results.forEach((row, rowIndex) => {
       const y = startY + rowHeight * (rowIndex + 1);
       const rowData = [
@@ -129,7 +122,6 @@ router.get('/payroll/pdf-generate', (req, res) => {
       drawRow(rowData, y);
     });
 
-    // 합계 계산
     let grossTotal = 0, taxTotal = 0, netTotal = 0;
     results.forEach(row => {
       grossTotal += parseFloat(row.gross || 0);
@@ -137,21 +129,21 @@ router.get('/payroll/pdf-generate', (req, res) => {
       netTotal += parseFloat(row.net || 0);
     });
 
-    // 합계 행
     const totalRowY = startY + rowHeight * (results.length + 1);
     const totalRow = new Array(headers.length).fill('');
-    totalRow[13] = 'Total:';           // PDD 자리에 Total:
+    totalRow[13] = 'Total:';
     totalRow[14] = grossTotal;
     totalRow[15] = taxTotal;
     totalRow[16] = netTotal;
 
-    drawRow(totalRow, totalRowY, false, true, true); // Bold + PDD 스킵
-
-    // ✅ 표 외곽선 그리기
-    drawTableBorder(results.length + 1); // +1 = 합계 행 포함
+    drawRow(totalRow, totalRowY, false, true, true);
+    drawTableBorder(results.length + 1);
 
     doc.end();
-  });
+  } catch (err) {
+    console.error('PDF 생성 오류:', err);
+    res.status(500).send('DB 오류');
+  }
 });
 
 module.exports = router;

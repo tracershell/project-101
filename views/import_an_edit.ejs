@@ -1,0 +1,10 @@
+<h3>🛠 PO 수정</h3>
+<form method="POST" action="/import_an/edit/<%= po.id %>">
+  <label>날짜: <input type="date" name="podate" value="<%= po.podate.toISOString().split('T')[0] %>" required></label>
+  <label>PO 번호: <input type="text" name="pono" value="<%= po.pono %>" required></label>
+  <label>스타일: <input type="text" name="style" value="<%= po.style %>" required></label>
+  <label>수량: <input type="number" name="pcs" value="<%= po.pcs %>" required></label>
+  <label>단가: <input type="number" name="price" value="<%= po.price %>" step="0.01" required></label>
+  <button type="submit">수정 완료</button>
+  <a href="/import_an">돌아가기</a>
+</form>
