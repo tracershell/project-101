@@ -188,7 +188,7 @@ router.post('/popayment/deposit', async (req, res) => {
     const paydate = req.session.paydate;
     const exrate = parseFloat(req.session.exrate);
     if (!paydate || !exrate) return res.send('결제일 또는 환율이 누락되었습니다. 먼저 입력해주세요.');
-    
+
     const [[po]] = await db.query('SELECT * FROM po WHERE id = ?', [po_id]);
     if (!po) return res.status(404).send('해당 PO를 찾을 수 없습니다.');
 
