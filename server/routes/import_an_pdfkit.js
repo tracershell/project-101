@@ -14,7 +14,7 @@ router.get('/import_an/pdf-generate', async (req, res) => {
       SELECT pono, style, podate, poamount, remain, note
       FROM po
       WHERE poamount - remain > 0
-        AND (note IS NULL OR TRIM(note) != 'full paid')
+        AND (note IS NULL OR note = '' OR TRIM(note) != 'full paid')
       ORDER BY podate DESC
     `);
 
@@ -29,9 +29,9 @@ router.get('/import_an/pdf-generate', async (req, res) => {
     doc.moveDown();
 
     const headers = ['PO Date', 'PO No', 'Style', 'Amount(CNY)', 'Remain(CNY)', 'Deposit(CNY)', 'Note'];
-    const colWidths = [70, 55, 80, 75, 75, 75, 65];
-    const rowHeight = 20;
-    const startX = 40;
+    const colWidths = [70, 55, 85, 85, 85, 85, 75];
+    const rowHeight = 18;
+    const startX = 35;
     let y = doc.y;
 
     const drawRow = (row, isHeader = false, bold = false) => {
@@ -42,7 +42,8 @@ router.get('/import_an/pdf-generate', async (req, res) => {
         const text = typeof cell === 'number' ? cell.toFixed(2) : String(cell || '');
         doc.text(text, x + 2, y + 5, {
           width: colWidths[i] - 4,
-          align: isHeader ? 'center' : (i >= 3 && i <= 5 ? 'right' : 'center'),
+          align: isHeader ? 'center'
+                : (i >= 3 && i <= 5 ? 'center' : 'center'),  // ← 금액 항목 가운데 정렬
         });
         doc.rect(x, y, colWidths[i], rowHeight).stroke();
         x += colWidths[i];
@@ -77,6 +78,7 @@ router.get('/import_an/pdf-generate', async (req, res) => {
     });
 
     drawRow(['', '', 'Total', '', '', totalDeposit, ''], false, true);
+   // drawTotalRow(totalDeposit);
 
     doc.end();
 
