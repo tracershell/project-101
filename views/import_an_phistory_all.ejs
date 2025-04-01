@@ -48,7 +48,7 @@
         const formattedDate = `${mm}/${dd}/${yy}`;
         const usdAmount = parseFloat(p.payamount).toFixed(2);
         const rate = parseFloat(p.exrate).toFixed(4);
-        const krwAmount = (p.payamount * p.exrate).toFixed(2);
+        const krwAmount = (p.payamount / p.exrate).toFixed(2);
         totalUsd += parseFloat(usdAmount);
         totalKrw += parseFloat(krwAmount);
       %>

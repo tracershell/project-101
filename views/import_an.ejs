@@ -9,6 +9,9 @@
     .paid { background-color: #e0ffe0; }
     .unpaid { background-color: #ffe0e0; }
     .form-section { margin-top: 30px; padding: 15px; border: 1px solid #aaa; border-radius: 6px; }
+    .hidden-full-paid {
+  display: none;
+}
   </style>
 </head>
 <body>
@@ -32,6 +35,7 @@
   <label>수량: <input type="number" name="pcs" step="any" required></label>
   <label>단가: <input type="number" name="price" step="any" required></label>
   <button type="submit">등록</button>
+  <button onclick="toggleFullPaid()" style="float: right; margin: 10px;">모두 보기</button>
 </form>
 
 <!-- ✅ 수정, 삭제 부분 -->
@@ -52,6 +56,7 @@
   <tbody>
     <% poList.forEach(po => { %>
       <tr>
+        <tr class="<%= po.remain === 0 ? 'paid' : 'unpaid' %> <%= po.note === 'full paid' ? 'hidden-full-paid' : '' %>">
         <td><%= formatDate(po.podate) %></td>
         <td><%= po.pono %></td>
         <td><%= po.style %></td>
@@ -77,7 +82,7 @@
   <h4>결제 정보 입력</h4>
   <form method="POST" action="/popayment/setPayInfo">
     <label>결제일: <input type="date" name="paydate" required></label>
-    <label>환율(USD → KRW): <input type="number" name="exrate" step="0.0001" required></label>
+    <label>환율(CNY → USD): <input type="number" name="exrate" step="0.0001" required></label>
     <button type="submit">입력 적용</button>
   </form>
 </div>
@@ -194,6 +199,14 @@
   dateInput?.addEventListener('change', () => {
     localStorage.setItem('poDate', dateInput.value);
   });
+
+   // button Click 시 숨긴행 보이게 하는 함수
+  function toggleFullPaid() {
+  const hiddenRows = document.querySelectorAll('.hidden-full-paid');
+  hiddenRows.forEach(row => {
+    row.style.display = (row.style.display === 'none' || row.style.display === '') ? 'table-row' : 'none';
+  });
+}
 
   // 수량, 단가 입력칸 step 화살표 제거
   /* Chrome, Safari, Edge, Opera */
