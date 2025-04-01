@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title><%= title %></title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: center; }
+    th { background-color: #f4f4f4; }
+    tr:nth-child(even) { background-color: #fdfdfd; }
+    .summary { margin-top: 20px; font-weight: bold; font-size: 15px; }
+  </style>
+</head>
+<body>
+
+<h3><%= title %></h3>
+
+<table>
+  <thead>
+    <tr>
+      <th>날짜</th>
+      <th>PO 번호</th>
+      <th>스타일</th>
+      <th>총액</th>
+      <th>잔금</th>
+      <th>비고</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% payments.forEach(p => { %>
+      <tr>
+        <td><%= new Date(p.podate).toLocaleDateString() %></td>
+        <td><%= p.pono %></td>
+        <td><%= p.style %></td>
+        <td><%= parseFloat(p.poamount).toFixed(2) %></td>
+        <td><%= parseFloat(p.remain).toFixed(2) %></td>
+        <td><%= p.note || '-' %></td>
+      </tr>
+    <% }) %>
+  </tbody>
+</table>
+
+<div class="summary">
+  총 PO 수: <%= payments.length %>
+</div>
+
+<div style="margin-top: 20px;">
+  <form action="/import_an" method="get">
+    <button type="submit" style="color: #ff6666; background: none; border: 1px solid #ffcccc; padding: 6px 12px; border-radius: 4px; cursor: pointer;">
+      ← 돌아가기
+    </button>
+  </form>
+</div>
+
+</body>
+</html>

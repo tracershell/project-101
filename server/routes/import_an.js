@@ -298,4 +298,28 @@ router.get('/popayment/history/unpaid', async (req, res) => {
   }
 });
 
+router.get('/popayment/history/deposit', async (req, res) => {
+  try {
+    const [rows] = await db.query(`
+      SELECT id, podate, pono, style, poamount, remain, note
+      FROM po
+      WHERE note IS NULL OR note NOT LIKE '%full paid%'
+      ORDER BY podate DESC
+    `);
+
+    if (rows.length === 0) {
+      return res.send(`<h3>선수금만 결제된 PO가 없습니다.</h3><a href="/import_an">← 돌아가기</a>`);
+    }
+
+    res.render('import_an_phistory_deposit', {
+      title: '선수금 결제된 PO 목록',
+      payments: rows
+    });
+  } catch (err) {
+    console.error('선수금 보기 오류:', err);
+    res.status(500).send('서버 오류');
+  }
+});
+
+
 module.exports = router;
