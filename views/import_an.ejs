@@ -9,9 +9,9 @@
     .paid { background-color: #e0ffe0; }
     .unpaid { background-color: #ffe0e0; }
     .form-section { margin-top: 30px; padding: 15px; border: 1px solid #aaa; border-radius: 6px; }
-    .hidden-full-paid {
-  display: none;
-}
+    .paid-30 { background-color: #e0f7ff; }     /* 하늘색 */
+    .paid-full { background-color: #e0ffe0; }   /* 연두색 */
+    .hidden-full-paid, .hidden-partial-paid { display: none;}
   </style>
 </head>
 <body>
@@ -55,8 +55,14 @@
   </thead>
   <tbody>
     <% poList.forEach(po => { %>
-      <tr>
-        <tr class="<%= po.remain === 0 ? 'paid' : 'unpaid' %> <%= po.note === 'full paid' ? 'hidden-full-paid' : '' %>">
+      <% 
+        const isFullPaid = po.note === 'full paid';
+        const isPartialPaid = po.note && po.note.includes('30% paid');
+      %>
+      <tr class="
+        <%= isFullPaid ? 'paid-full hidden-full-paid' : '' %>
+        <%= isPartialPaid ? 'paid-30 hidden-partial-paid' : '' %>
+      ">
         <td><%= formatDate(po.podate) %></td>
         <td><%= po.pono %></td>
         <td><%= po.style %></td>
@@ -137,7 +143,15 @@
   </thead>
   <tbody>
     <% poList.forEach(po => { %>
-      <tr class="<%= po.remain === 0 ? 'paid' : 'unpaid' %>">
+      <% 
+        const isFullPaid = po.note === 'full paid';
+        const isPartialPaid = po.note && po.note.includes('30% paid');
+      %>
+      <tr class="
+        <%= po.remain === 0 ? 'paid' : 'unpaid' %>
+        <%= isFullPaid ? 'paid-full hidden-full-paid' : '' %>
+        <%= isPartialPaid ? 'paid-30' : '' %>
+      ">
         <td><%= formatDate(po.podate) %></td>
         <td><%= po.pono %></td>
         <td><%= po.style %></td>
@@ -201,12 +215,29 @@
   });
 
    // button Click 시 숨긴행 보이게 하는 함수
+   let showHiddenRows = false;
+
   function toggleFullPaid() {
-  const hiddenRows = document.querySelectorAll('.hidden-full-paid');
-  hiddenRows.forEach(row => {
-    row.style.display = (row.style.display === 'none' || row.style.display === '') ? 'table-row' : 'none';
+    const fullRows = document.querySelectorAll('.hidden-full-paid');
+    const partialRows = document.querySelectorAll('.hidden-partial-paid');
+
+    fullRows.forEach(row => {
+      row.style.display = showHiddenRows ? 'none' : 'table-row';
+    });
+    partialRows.forEach(row => {
+      row.style.display = showHiddenRows ? 'none' : 'table-row';
+    });
+
+    const btn = document.querySelector('button[onclick="toggleFullPaid()"]');
+    btn.textContent = showHiddenRows ? '모두 보기' : '숨기기';
+    showHiddenRows = !showHiddenRows;
+  }
+
+  // 초기 렌더링 시 숨긴 행 유지
+  window.addEventListener('DOMContentLoaded', () => {
+    toggleFullPaid();  // toggle once to apply "숨기기" 상태
+    toggleFullPaid();  // toggle again to return to default "모두 보기"
   });
-}
 
   // 수량, 단가 입력칸 step 화살표 제거
   /* Chrome, Safari, Edge, Opera */
