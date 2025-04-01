@@ -64,30 +64,7 @@ CREATE TABLE employees (
 );
 
 
-CREATE TABLE po (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  podate DATE,
-  pono VARCHAR(50) UNIQUE,
-  style VARCHAR(100),
-  pcs INT,
-  price DECIMAL(10,2),
-  poamount DECIMAL(10,2), -- pcs * price
-  note TEXT,
-  remain DECIMAL(10,2) DEFAULT 0,
-  deposit_paid TINYINT(1) NOT NULL DEFAULT 0
-);
 
-
-CREATE TABLE popayment (
-  id INT AUTO_INCREMENT PRIMARY KEY,
-  po_id INT,
-  paydate DATE,
-  paytype ENUM('partial', 'full'),
-  exrate DECIMAL(10,4),
-  payamount DECIMAL(10,2),
-  note TEXT,
-  FOREIGN KEY (po_id) REFERENCES po(id)
-);
 
 
 CREATE TABLE po (
@@ -114,4 +91,40 @@ CREATE TABLE popayment (
   payamount DECIMAL(10,2) NOT NULL,
   note TEXT,
   FOREIGN KEY (po_id) REFERENCES po(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE povendor (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  podate DATE NOT NULL,
+  pono VARCHAR(50) UNIQUE NOT NULL,
+  vendor_name VARCHAR(100) NOT NULL,
+  style VARCHAR(100),
+  pcs INT,
+  price DECIMAL(10,2),
+  poamount DECIMAL(10,2),
+  remain DECIMAL(10,2) DEFAULT 0,
+  note TEXT,
+  deposit_paid TINYINT(1) DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE povendorpayment (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  povendor_id INT NOT NULL,
+  paydate DATE NOT NULL,
+  paytype VARCHAR(20) NOT NULL DEFAULT 'deposit',
+  exrate DECIMAL(10,4) NOT NULL,
+  payamount DECIMAL(10,2) NOT NULL,
+  note TEXT,
+  FOREIGN KEY (povendor_id) REFERENCES povendor(id) ON DELETE CASCADE
+);
+
+
+
+CREATE TABLE vendor_name (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(100) NOT NULL UNIQUE,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
