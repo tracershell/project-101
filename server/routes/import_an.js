@@ -248,4 +248,31 @@ router.post('/popayment/final', async (req, res) => {
   }
 });
 
+router.get('/popayment/history/bypono', async (req, res) => {
+  const { pono } = req.query;
+  if (!pono) return res.status(400).send('PO 번호를 입력해주세요.');
+
+  try {
+    const [payments] = await db.query(`
+      SELECT pp.*, p.pono, p.style 
+      FROM popayment pp
+      JOIN po p ON pp.po_id = p.id
+      WHERE p.pono = ?
+      ORDER BY pp.paydate DESC
+    `, [pono]);
+
+    if (payments.length === 0) {
+      return res.send(`<h3>${pono}에 대한 결제내역이 없습니다.</h3><a href="/popayment/history/all">전체 보기</a>`);
+    }
+
+    res.render('import_an_phistory_all', {
+      title: `PO 번호 ${pono} 결제 내역`,
+      payments
+    });
+  } catch (err) {
+    console.error('PO 번호 검색 오류:', err);
+    res.status(500).send('서버 오류 발생');
+  }
+});
+
 module.exports = router;

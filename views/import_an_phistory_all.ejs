@@ -13,6 +13,14 @@
   </style>
 </head>
 <body>
+  <!-- ✅ PO 번호 검색 폼 (표 위 또는 아래에 위치) -->
+<div style="margin: 20px 0;">
+  <form method="GET" action="/popayment/history/bypono" style="display: flex; align-items: center; gap: 10px;">
+    <label for="pono">PO 번호로 검색:</label>
+    <input type="text" name="pono" id="pono" required>
+    <button type="submit">검색</button>
+  </form>
+</div>
   <h3><%= title %></h3>
   <% 
     let totalUsd = 0;
@@ -25,9 +33,9 @@
         <th>PO 번호</th>
         <th>스타일</th>
         <th>유형</th>
-        <th>USD 금액</th>
+        <th>CNY 금액</th>
         <th>환율</th>
-        <th>환산 금액 (KRW)</th>
+        <th>환산 금액 (USD)</th>
         <th>비고</th>
       </tr>
     </thead>
