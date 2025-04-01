@@ -47,8 +47,8 @@
       <th>Style</th>
       <th>수량</th>
       <th>단가</th>
-      <th>총액</th>
-      <th>잔금</th>
+      <th>총액(CNY)</th>
+      <th>잔금(CNY)</th>
       <th>비고</th>
       <th>기능</th>
     </tr>
@@ -103,6 +103,11 @@
     <button type="submit">전체 결제 보기</button>
   </form>
 
+<!-- 잔금 보기 버튼 -->
+<form method="GET" action="/popayment/history/unpaid" style="display: inline-block; margin-right: 20px;">
+  <button type="submit" style="background-color: #fff0f0; color: #cc0000; border: 1px solid #f5cccc;">잔금 보기</button>
+</form>
+
   <!-- 선택 날짜 결제 보기 -->
   <form method="GET" action="/popayment/history/bydate" style="display: inline-block;">
     <label>날짜 선택:
@@ -133,8 +138,8 @@
       <th>Style</th>
       <th>수량</th>
       <th>단가</th>
-      <th>총액</th>
-      <th>잔금</th>
+      <th>총액(CNY)</th>
+      <th>잔금(CNY)</th>
       <th>비고</th>
       <th>선수금</th>
       <th>잔금 결제</th>

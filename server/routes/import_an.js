@@ -275,4 +275,27 @@ router.get('/popayment/history/bypono', async (req, res) => {
   }
 });
 
+router.get('/popayment/history/unpaid', async (req, res) => {
+  try {
+    const [payments] = await db.query(`
+      SELECT p.id, p.podate, p.pono, p.style, p.poamount, p.remain, p.note
+      FROM po p
+      WHERE p.remain > 0
+      ORDER BY p.podate DESC
+    `);
+
+    if (payments.length === 0) {
+      return res.send(`<h3>잔금이 남아 있는 PO가 없습니다.</h3><a href="/import_an">← 돌아가기</a>`);
+    }
+
+    res.render('import_an_phistory_unpaid', {
+      title: '잔금 남은 PO 내역',
+      payments
+    });
+  } catch (err) {
+    console.error('잔금 조회 오류:', err);
+    res.status(500).send('서버 오류');
+  }
+});
+
 module.exports = router;
