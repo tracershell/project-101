@@ -9,40 +9,56 @@
     th { background-color: #f4f4f4; }
     tr:nth-child(even) { background-color: #fdfdfd; }
     .summary { margin-top: 20px; font-weight: bold; font-size: 15px; }
+    .total-row td {
+      border: 1px solid #ccc;
+      padding: 8px;
+    }
   </style>
 </head>
 <body>
 
 <h3><%= title %></h3>
 
+<% let totalDeposit = 0; %>
+
 <table>
   <thead>
     <tr>
-      <th>날짜</th>
+      <th>PO 날짜</th>
       <th>PO 번호</th>
       <th>스타일</th>
-      <th>총액</th>
-      <th>잔금</th>
+      <th>총액(CNY)</th>
+      <th>잔금(CNY)</th>
+      <th>선수금(CNY)</th>
       <th>비고</th>
     </tr>
   </thead>
   <tbody>
-    <% payments.forEach(p => { %>
+    <% payments.forEach(p => { 
+      const poAmount = parseFloat(p.poamount);
+      const remain = parseFloat(p.remain);
+      const deposit = poAmount - remain;
+      totalDeposit += deposit;
+    %>
       <tr>
-        <td><%= new Date(p.podate).toLocaleDateString() %></td>
+        <td><%= new Date(p.deposit_date || p.podate).toLocaleDateString() %></td>
         <td><%= p.pono %></td>
         <td><%= p.style %></td>
-        <td><%= parseFloat(p.poamount).toFixed(2) %></td>
-        <td><%= parseFloat(p.remain).toFixed(2) %></td>
+        <td><%= poAmount.toFixed(2) %></td>
+        <td><%= remain.toFixed(2) %></td>
+        <td><%= deposit.toFixed(2) %></td>
         <td><%= p.note || '-' %></td>
       </tr>
     <% }) %>
+
+    <!-- ✅ 총 선수금 합계 행 -->
+    <tr class="total-row" style="font-weight: bold; background-color: #f9f9f9;">
+      <td colspan="5" style="text-align: right;">총 선수금 합계</td>
+      <td style="text-align: center;"><%= totalDeposit.toFixed(2) %></td>
+      <td></td>
+    </tr>
   </tbody>
 </table>
-
-<div class="summary">
-  총 PO 수: <%= payments.length %>
-</div>
 
 <div style="margin-top: 20px;">
   <form action="/import_an" method="get">
