@@ -1,20 +1,23 @@
-require('dotenv').config();
-const express = require('express');
-const path = require('path');
-const session = require('express-session');
-const expressLayouts = require('express-ejs-layouts');
+require('dotenv').config();                             //.env 에 저장된 환경변수를 process 상에 띄운다 ==> 환경변수 호출: process.env.PORT
+const express = require('express');                     // node.js 에서 가장 널리 사용되는 frame work : 웹서버, 라우팅처리, 미들웨어 연결결
+const path = require('path');                           // node.js 내장 모듈 : 파일 경로 조작가능 모듈
+const session = require('express-session');             // 사용자 세션을 관리하는 모듈 : 사용자 정보 유지 및 로그인 체크 ==> req.session.user ={id:1, name: 'Michael'}
+const expressLayouts = require('express-ejs-layouts');  // ejs 의 layout 기능 제공 : <main>  <%- body %>  </main> : body 에 본문이 들어감
 
-const app = express();
+const app = express();                                  // app 를 서버 객체로 생성 => app.set() 뷰엔진, 포트설정, 서버 설정값 지정, app.use() 정적파일,세션,파서 등록..... 
+// app.get()/app.post() 라우터 정의, app.listen() 서버시작 및 포트 요청 대기기
 
-// 미들웨어 설정
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+// 미들웨어 설정 : middleware 를 Express Server 에 등록
+app.use(express.urlencoded({ extended: true }));        // frontend 와 backend 사이의 POST 전달을 req.body = {username: tshell} 로 만들어 전달하게 하는 기능
+// true 는 단순한 key=value 형식만이 아니라 중첩객체를 폼함한 데이터도 파싱 가능하게 함(qs Libray)
+
+app.use(express.json());                                // json 형식 "id":1, "name":"michael" 형식을 req.body ={id:1, name:'Michael'} 로 만들어 주는 기능능
 
 // 세션 설정 (환경변수로 보안 강화) : 라우팅 보다 먼저 위치해야 함
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'defaultSecret',
-  resave: false,
-  saveUninitialized: false
+app.use(session({                                       // session 변수에 express-session 모듈을 달아 app 서버 객체에서 사용
+  secret: process.env.SESSION_SECRET || 'defaultSecret', // secret 값으로 환경변수 내의 SESSION_SCRET 값이 있으면 그걸 사용하고 그러지 않은면 'defaultSecret' 값 사용
+  resave: false,                                         // 세션에 변경이 있을 때만 저장 : 불필요한 disk access 방지지
+  saveUninitialized: false                               // 세션 저장소에 기록하지 말것 (로그인도 안했고, 세션에 아무것도 저장하지 않았다면) - 쿠키도 발금 되지 않음
   //  cookie: {
   //    maxAge: 1000 * 60 * 60  // 1시간 (밀리초 단위)
   //  }
