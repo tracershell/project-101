@@ -78,6 +78,13 @@ app.use('/', import_an_paymentRoutes);   //
 app.use('/', import_an_depositRoutes);   // 
 app.use('/', import_vendorRoutes);   // import vendor routes
 
+//=================================================================================
+const importVendorRoutes = require('./server/routes/admin/import/import_vendor');
+app.use('/admin/import', importVendorRoutes);
+
+//=================================================================================
+
+
 // 서버 실행
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

@@ -128,3 +128,16 @@ CREATE TABLE vendor_name (
   name VARCHAR(100) NOT NULL UNIQUE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+
+CREATE TABLE import_vendor (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE,
+  v_name VARCHAR(100),
+  vd_rate DECIMAL(5,2),
+  v_address1 VARCHAR(200),
+  v_address2 VARCHAR(200),
+  v_phone VARCHAR(50),
+  v_email VARCHAR(100),
+  v_note TEXT
+);

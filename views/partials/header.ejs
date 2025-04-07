@@ -1,3 +1,36 @@
+<style>
+  /* Dropdown menu */
+.navbar .menu .dropdown {
+  position: relative;
+}
+
+.navbar .menu .dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.navbar .menu .dropdown .dropdown-content {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background-color: white;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  min-width: 160px;
+  z-index: 1;
+}
+
+.navbar .menu .dropdown .dropdown-content a {
+  color: #333;
+  padding: 4px 10px;
+  text-decoration: none;
+  display: block;
+}
+
+.navbar .menu .dropdown .dropdown-content a:hover {
+  background-color: #9cbcf0;
+}
+</style>
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -24,6 +57,14 @@
       <a href="/payroll">paylist</a>
       <a href="#">Support</a>
       <a href="#">Blog</a>
+      <div class="dropdown">
+        <a href="#">Import</a>
+          <div class="dropdown-content">
+            <a href="/admin/import">Vendor</a>
+            <a href="/import_po">PO</a>
+            <a href="/import_pay">Pay</a>
+          </div>
+      </div>
       <a href="#">Company</a>
       <a href="/test01">Test01</a>
       <a href="/test02">Test02</a>

@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Vendor Management</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    .top-section {
+      flex: 0 0 30%;
+      padding: 1rem;
+      background-color: #f0f0f0;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+    .bottom-section {
+      flex: 1 1 70%;
+      padding: 1rem;
+      overflow-y: auto;
+      font-size: 12px;
+    }
+
+ 
+    h2 {
+      margin-bottom: 1rem;
+      font-size: 20px;
+      color: #333;
+    }
+
+    .table-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      white-space: nowrap;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 0.3rem;
+      text-align: center;
+    }
+
+    th {
+      background-color: #f0f8ff;
+    }
+
+    .form {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    .form input,
+    .form textarea,
+    .form select {
+      padding: 0.3rem;
+      font-size: 11px;
+      flex: 1 1 24%;
+      box-sizing: border-box;
+    }
+
+    .form-buttons {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    button {
+      padding: 4px 16px;
+      font-size: 11px;
+      cursor: pointer;
+      border: 1px solid #066da5;;
+      border-radius: 4px;
+     
+    }
+
+    .btn-delete { background-color: #f5f7fa; }
+    .btn-edit { background-color: #f5f7fa; }
+    .btn-pdf { background-color: #f5f7fa; }
+  </style>
+</head>
+<body class="employee-page">
+
+      
+  <!-- Top section -->
+  
+    <div class="top-section compact-form">
+      <h2>Vendor 입력</h2>
+      <form method="POST" action="/admin/import/add" class="form">
+        <input type="date" name="date" placeholder="등록일" required>
+        <input type="text" name="v_name" placeholder="Vendor Name" required>
+        <input type="number" name="vd_rate" placeholder="Deposit Rate (%)" step="0.01" required>
+        <input type="text" name="v_address1" placeholder="Address 1">
+        <input type="text" name="v_address2" placeholder="Address 2">
+        <input type="text" name="v_phone" placeholder="Phone">
+        <input type="email" name="v_email" placeholder="Email">
+        <textarea name="v_note" placeholder="Note" rows="2" style="flex: 1 1 100%;"></textarea>
+  
+        <div class="form-buttons">
+          <button type="submit">➕ 등록</button>
+          <button type="reset">🧹 초기화</button>
+        </div>
+      </form>
+    </div>
+  
+    
+
+  <!-- Bottom section -->  
+  <div class="bottom-section">
+    <div class="table-header">
+      <h2>Vendor List</h2>
+      <div>
+        <a href="/admin/import/pdf" target="_blank"><button class="btn-pdf">📄 PDF 출력</button></a>
+      </div>
+    </div>
+
+    <form method="GET" action="/admin/import" style="margin: 1rem 0;">
+      <label>Filter:
+        <select name="filter_name">
+          <option value="">‹전체›</option>
+          <% names.forEach(n => { %>
+            <option value="<%= n.v_name %>" <%= filter_name === n.v_name ? 'selected' : '' %>><%= n.v_name %></option>
+          <% }) %>
+        </select>
+      </label>
+      <button type="submit">검색</button>
+    </form>
+
+    <table class="compact-table">
+      <thead>
+        <tr>
+          <th>등록일</th>
+          <th>Vendor Name</th>
+          <th>Deposit Rate</th>
+          <th>Address</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Note</th>
+          <th>수정</th>
+          <th>삭제</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% vendors.forEach(v => { %>
+          <tr>
+            <td><%= v.date.toISOString().split('T')[0] %></td>
+            <td><%= v.v_name %></td>
+            <td><%= v.vd_rate %> %</td>
+            <td><%= v.v_address1 %> <%= v.v_address2 %></td>
+            <td><%= v.v_phone %></td>
+            <td><%= v.v_email %></td>
+            <td><%= v.v_note %></td>
+            <td>
+              <form method="GET" action="/admin/import/edit/<%= v.id %>">
+                <button class="btn-edit">✏️</button>
+              </form>
+            </td>
+            <td>
+              <form method="POST" action="/admin/import/delete/<%= v.id %>" onsubmit="return confirm('삭제하시겠습니까?');">
+                <button class="btn-delete">🗑️</button>
+              </form>
+            </td>
+          </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+ 
+
+</body>
+</html>
