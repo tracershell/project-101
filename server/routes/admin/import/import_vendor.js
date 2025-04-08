@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../db/mysql');
-const PDFDocument = require('pdfkit');
+const puppeteer = require('puppeteer');   // PDF 출력에 사용, pdfview에 사용
+const fs = require('fs');                 // PDF 출력에 사용, pdfview에 사용    
+const path = require('path');             // PDF 출력에 사용, pdfview에 사용 
+const ejs = require('ejs');               // pdfview에 사용
 
 // 목록 보기 + 필터
 router.get('/', async (req, res) => {
@@ -63,23 +66,115 @@ router.post('/delete/:id', async (req, res) => {
 
 // PDF 출력
 router.get('/pdf', async (req, res) => {
-  const [vendors] = await db.query('SELECT * FROM import_vendor ORDER BY date DESC');
-  const doc = new PDFDocument({ margin: 30, size: 'letter' });
+  const { filter_name } = req.query;
+  const [vendors] = await db.query(
+    filter_name && filter_name !== ''
+      ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
+      : 'SELECT * FROM import_vendor ORDER BY date DESC',
+    filter_name ? [filter_name] : []
+  );
+  const [names] = await db.query('SELECT DISTINCT v_name FROM import_vendor');
 
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'inline; filename=vendor_list.pdf');
-  doc.pipe(res);
+  // 1. EJS → HTML 렌더링 (import_vendor_pdf.ejs 전용 템플릿 필요)
+  const ejs = require('ejs');
 
-  doc.fontSize(16).text('Vendor List', { align: 'center' });
-  doc.moveDown();
-
-  vendors.forEach(v => {
-    doc.fontSize(10).text(
-      `${v.date.toISOString().split('T')[0]} | ${v.v_name} | ${v.vd_rate}% | ${v.v_address1} ${v.v_address2} | ${v.v_phone} | ${v.v_email} | ${v.v_note || ''}`
-    );
+  try {
+    // EJS 템플릿을 사용하여 HTML 생성
+  const html = await ejs.renderFile(path.resolve('views/admin/import/import_vendor_pdf.ejs'), {
+    vendors,
+    names,
+    filter_name
   });
 
-  doc.end();
+  // 2. Puppeteer로 PDF 생성 :  수동 설치하여 설치 경로 지정 (원래 chrome brower가 자동 설치 되야 함)
+  const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',  // 또는 '/usr/bin/chromium'
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+  
+
+  const page = await browser.newPage();
+  await page.setContent(html, { waitUntil: 'domcontentloaded' });
+
+  const pdfBuffer = await page.pdf({
+    format: 'letter',
+    landscape: true,
+    printBackground: true
+  });
+
+  await browser.close();
+
+  // 3. PDF 응답
+  // res.send(html);   // PDF 대신 HTML 에 직접 출력
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'inline; filename=vendor_list.pdf');
+  res.send(pdfBuffer);
+} catch (error) {
+  console.error('PDF 생성중 오류:', error);
+  res.status(500).send('PDF 생성 오류:' + error.message);
+}
+});
+
+// ✅ HTML 화면에서 리스트 출력용 라우트 (PDFVIEW)
+router.get('/pdfview', async (req, res) => {
+  const { filter_name } = req.query;
+  const [vendors] = await db.query(
+    filter_name && filter_name !== ''
+      ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
+      : 'SELECT * FROM import_vendor ORDER BY date DESC',
+    filter_name ? [filter_name] : []
+  );
+  const [names] = await db.query('SELECT DISTINCT v_name FROM import_vendor');
+
+  res.render('admin/import/import_vendor_pdfview', {
+    title: 'Vendor List View',
+    vendors,
+    names,
+    filter_name
+  });
+});
+
+
+// ✅ PDF view 에서 다운로드 버튼 클릭 시 PDF 생성
+router.get('/pdfdownload', async (req, res) => {
+  const { filter_name } = req.query;
+  const [vendors] = await db.query(
+    filter_name && filter_name !== ''
+      ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
+      : 'SELECT * FROM import_vendor ORDER BY date DESC',
+    filter_name ? [filter_name] : []
+  );
+  const [names] = await db.query('SELECT DISTINCT v_name FROM import_vendor');
+
+  const html = await ejs.renderFile(path.resolve('views/admin/import/import_vendor_pdf.ejs'), {
+    vendors,
+    names,
+    filter_name
+  });
+
+  const browser = await puppeteer.launch({
+    executablePath: '/usr/bin/chromium-browser',
+    headless: 'new',
+    args: ['--no-sandbox', '--disable-setuid-sandbox']
+  });
+
+  const page = await browser.newPage();
+  await page.goto(`data:text/html;charset=utf-8,${html}`, {
+    waitUntil: 'networkidle0',
+  });
+
+  const pdfBuffer = await page.pdf({
+    format: 'letter',
+    landscape: true,
+    printBackground: true
+  });
+
+  await browser.close();
+
+  res.setHeader('Content-Type', 'application/pdf');
+  res.setHeader('Content-Disposition', 'attachment; filename=vendor_list.pdf');
+  res.send(pdfBuffer);
 });
 
 module.exports = router;

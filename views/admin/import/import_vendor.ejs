@@ -206,9 +206,17 @@
   <div class="table-header">
     <h2>Vendor List</h2>
     <div>
-      <a href="/admin/import/pdf" target="_blank"><button class="btn-pdf">📄 PDF 출력</button></a>
+      <!-- 기존 PDF 다운로드 버튼 -->
+      <a href="/admin/import/pdf" target="_blank">
+        <button class="btn-pdf">📄 PDF 출력</button>
+      </a>
+      <!-- ✅ 새롭게 추가되는 PDF 미리보기 버튼 -->
+      <a href="/admin/import/pdfview" target="_blank">
+        <button class="btn-pdf">👁️ PDF 보기</button>
+      </a>
     </div>
   </div>
+  
 
   <form method="GET" action="/admin/import" style="margin: 1rem 0;">
     <label class="filter-label">Vendor :
