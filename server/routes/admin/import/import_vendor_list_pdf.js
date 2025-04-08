@@ -7,11 +7,17 @@ const fs = require('fs');
 
 // 컬럼 설정
 const headers = [
-  '등록일', 'Vendor Name', 'Deposit Rate', 'Address', 'Phone', 'Email', 'Note'
+  'Date', 'Vendor Name', 'D Rate', 'Address', 'Phone', 'Email', 'Note'
 ];
 
 const colWidths = [
-  60, 100, 60, 200, 100, 150, 160
+  60,     // 등록일
+  120,    // Vendor Name
+  30,     // Deposit Rate
+  270,    // Address
+  70,    // Phone          
+  100,    // Email     
+  160     // Note      
 ];
 
 // 📄 PDF 출력 라우터
@@ -37,12 +43,12 @@ router.get('/pdf', async (req, res) => {
     res.setHeader('Content-Disposition', 'inline; filename=vendor_list.pdf');
     doc.pipe(res);
 
-    const startX = 40;
-    const startY = 80;
+    const startX = 20;        // 시작 X 좌표 (왼쪽 여백 조절) ++++ ===>
+    const startY = 40;        // 시작 Y 좌표 (왼쪽 여백 조절) ++++  V
     const rowHeight = 20;
 
-    doc.fontSize(16).text('Vendor List', { align: 'center' });
-    doc.fontSize(10);
+    doc.fontSize(11).text('Vendor List', startX, 20, { align: 'center' });   // 폰트 크기 , font 위치 
+    doc.fontSize(7);
 
     // 헤더
     const drawRow = (rowData, y, isHeader = false, bold = false) => {
@@ -50,6 +56,7 @@ router.get('/pdf', async (req, res) => {
       doc.font(bold ? 'Korean-Bold' : 'Korean');
       rowData.forEach((text, i) => {
         const colWidth = colWidths[i];
+        doc.lineWidth(isHeader ? 1 : 0.5);                // 모든 선 두께 0.5 기본값 (얇음) , 1 : 조금 더 굵게, 2: 꽤 굵게
         doc.rect(x, y, colWidth, rowHeight).stroke();
         doc.text(text, x + 4, y + 6, {
           width: colWidth - 8,
@@ -66,7 +73,7 @@ router.get('/pdf', async (req, res) => {
       const rowData = [
         v.date.toISOString().split('T')[0],
         v.v_name,
-        `${v.vd_rate}%`,
+        `${parseInt(v.vd_rate)}%`,                // 소수점 제거
         `${v.v_address1} ${v.v_address2}`,
         v.v_phone,
         v.v_email,
