@@ -98,21 +98,11 @@
 
     .form-row.second {
   display: flex;                        /* .for-row 자체에 display: flex 로 선언되어 상속 될 것 같지만 되지 않아 지정 */
-  justify-content: center;              /* 내부 그룹을 가운데 정렬 */
+  width: 100%;
+  align-items: center;
+  gap: 0.5rem;
 }
 
-.form-row.second .button-group {
-  display: flex;
-  gap: 50px;
-}
-
-
-    .form-buttons {
-      margin-top: 3px;
-      display: flex;
-      gap: 0.5rem;
-      flex-wrap: wrap;
-    }
 
     button {
       padding: 3px 16px; 
@@ -138,7 +128,7 @@
 
 /* 콤보박스를 입력칸처럼 + 3배 크게 보이게 */
 .filter-select {
-  height: 24x;                  /* 보통 12px → 36px로 약 3배 */
+  height: 24px;                  /* 보통 12px → 36px로 약 3배 */
   font-size: 12px;
   padding: 3px 3px;
   border: 1px solid #ccc;
@@ -194,22 +184,19 @@
     <div class="form-row first">
       <input type="date" name="date" placeholder="등록일" required style="flex: 1 1 5%;">
       <input type="text" name="v_name" placeholder="Vendor Name" required style="flex: 1 1 17%;">
-      <input type="number" name="vd_rate" placeholder="Deposit Rate (%)" step="0.01" required style="flex: 1 1 0.5%;">
-      <input type="text" name="v_address1" placeholder="Address 1" style="flex: 1 1 15%;">
-      <input type="text" name="v_address2" placeholder="Address 2" style="flex: 1 1 15%;">
+      <input type="number" name="vd_rate" placeholder="Deposit Rate (%)" required style="flex: 0 0 100px; max-width:110px;"> 
+      <input type="text" name="v_address1" placeholder="Address" style="flex: 1 1 15%;">
+      <input type="text" name="v_address2" placeholder="city, state, zip" style="flex: 1 1 15%;">
       <input type="text" name="v_phone" placeholder="Phone" style="flex: 1 1 5.5%;">
       <input type="email" name="v_email" placeholder="Email" style="flex: 1 1 12%;">
       <textarea name="v_note" placeholder="Note" rows="2" style="flex: 1 1 30%; resize: vertical;"></textarea>
     </div>
 
     <!-- ✅ 줄 2: 버튼들 -->
-<!-- 버튼 감싸는 div 추가 -->
-<div class="form-row second">
-  <div class="button-group">
-    <button type="submit">➕ 등록</button>
-    <button type="reset">🧹 초기화</button>
-  </div>
-</div>
+    <div class="form-row second" style="display: flex; justify-content: space-between; align-items: center;">
+      <button type="reset">🧹 초기화</button>
+      <button type="submit">➕ 등록</button>
+    </div>
 
   </form>
 </div>

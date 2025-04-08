@@ -36,13 +36,29 @@ router.post('/add', async (req, res) => {
 router.get('/edit/:id', async (req, res) => {
   const [[vendor]] = await db.query('SELECT * FROM import_vendor WHERE id = ?', [req.params.id]);
   if (!vendor) return res.status(404).send('Vendor not found');
-  res.render('admin/import/import_vendor_edit', { vendor });
+  res.render('admin/import/import_vendor_edit', {
+    title: 'Vender Edit',
+    vendor });
+});
+
+// 수정 저장 처리
+router.post('/edit/:id', async (req, res) => {
+  const { date, v_name, vd_rate, v_address1, v_address2, v_phone, v_email, v_note } = req.body;
+  const { id } = req.params;
+
+  await db.query(`
+    UPDATE import_vendor 
+    SET date = ?, v_name = ?, vd_rate = ?, v_address1 = ?, v_address2 = ?, v_phone = ?, v_email = ?, v_note = ?
+    WHERE id = ?
+  `, [date, v_name, vd_rate, v_address1, v_address2, v_phone, v_email, v_note, id]);
+
+  res.redirect('/admin/import');
 });
 
 // 삭제
 router.post('/delete/:id', async (req, res) => {
   await db.query('DELETE FROM import_vendor WHERE id = ?', [req.params.id]);
-  res.redirect('/');
+  res.redirect('/admin/import');
 });
 
 // PDF 출력
