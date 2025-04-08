@@ -82,6 +82,8 @@ app.use('/', import_vendorRoutes);   // import vendor routes
 const importVendorRoutes = require('./server/routes/admin/import/import_vendor');
 app.use('/admin/import', importVendorRoutes);
 
+app.use('/admin/import', require('./server/routes/admin/import/import_vendor_list_pdf'));
+
 //=================================================================================
 
 

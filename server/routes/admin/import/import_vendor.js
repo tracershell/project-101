@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../../db/mysql');
-const puppeteer = require('puppeteer');   // PDF 출력에 사용, pdfview에 사용
-const fs = require('fs-extra');                 // PDF 출력에 사용, pdfview에 사용    
-const path = require('path');             // PDF 출력에 사용, pdfview에 사용 
-const ejs = require('ejs');               // pdfview에 사용
+const path = require('path');
+const PDFDocument = require('pdfkit');
+const { Table } = require('pdfkit-table');
+const ejs = require('ejs');
+const fs = require('fs');
+
 
 // 목록 보기 + 필터
 router.get('/', async (req, res) => {
@@ -64,54 +66,58 @@ router.post('/delete/:id', async (req, res) => {
   res.redirect('/admin/import');
 });
 
-// PDF 출력
-// PDF 출력 (puppeteer 사용)
-router.get('/pdf', async (req, res) => {
-  const { filter_name } = req.query;
-  const [vendors] = await db.query(
-    filter_name && filter_name !== ''
-      ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
-      : 'SELECT * FROM import_vendor ORDER BY date DESC',
-    filter_name ? [filter_name] : []
-  );
-  const [names] = await db.query('SELECT DISTINCT v_name FROM import_vendor');
-
-  try {
-    const html = await ejs.renderFile(
-      path.resolve('views/admin/import/import_vendor_pdf.ejs'),
-      { vendors, names, filter_name }
+// ✅ PDFKIT 으로 PDF 출력
+router.get('/xxxxpdf', async (req, res) => {
+    const { filter_name } = req.query;
+    const [vendors] = await db.query(
+      filter_name && filter_name !== ''
+        ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
+        : 'SELECT * FROM import_vendor ORDER BY date DESC',
+      filter_name ? [filter_name] : []
     );
-
-    const browser = await puppeteer.launch({
-      headless: 'new',
-      args: ['--no-sandbox', '--disable-setuid-sandbox']
-    });
-
-    const page = await browser.newPage();
-    await page.setContent(html, { waitUntil: 'domcontentloaded' });
-
-    const pdfBuffer = await page.pdf({
-      format: 'letter',
-      landscape: true,
-      printBackground: true
-    });
-
-    await browser.close();
-
-    // 파일 저장 (옵션)
-    const outputPath = path.join(__dirname, '../../../public/pdfs/vendor_list.pdf');
-    await fs.outputFile(outputPath, pdfBuffer);
-
-    // 응답
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', 'inline; filename=vendor_list.pdf');
-    res.send(pdfBuffer);
-  } catch (error) {
-    console.error('PDF 생성 오류:', error);
-    res.status(500).send('PDF 생성 오류: ' + error.message);
-  }
-});
-
+  
+    try {
+        const fontPath = path.resolve('public/fonts/NotoSansKR-Regular.ttf');
+        console.log('📁 폰트 경로:', fontPath);
+  
+      // ✅ 폰트 파일 존재 여부 확인
+      if (!fs.existsSync(fontPath)) {
+        console.error('❌ 폰트 파일 없음:', fontPath);
+        return res.status(500).send('폰트 파일이 존재하지 않습니다.');
+      }
+      const doc = new PDFDocument({ margin: 40, size: 'letter', layout: 'landscape' });
+  
+      doc.registerFont('Korean', fontPath);
+      doc.font('Korean');
+  
+      res.setHeader('Content-Type', 'application/pdf');
+      res.setHeader('Content-Disposition', 'inline; filename=vendor_list.pdf');
+      doc.pipe(res);
+  
+      // 제목
+      doc.fontSize(16).text('Vendor List', { align: 'center' });
+      doc.moveDown();
+  
+      // 내용
+      vendors.forEach(v => {
+        const line = [
+          v.date.toISOString().split('T')[0],
+          v.v_name,
+          `${v.vd_rate}%`,
+          `${v.v_address1} ${v.v_address2}`,
+          v.v_phone,
+          v.v_email,
+          v.v_note || ''
+        ].join(' | ');
+        doc.fontSize(10).text(line);
+      });
+  
+      doc.end();
+    } catch (err) {
+      console.error('PDF 생성 오류:', err);
+      res.status(500).send('PDF 생성 오류: ' + err.message);
+    }
+  });
 
 // ✅ HTML 화면에서 리스트 출력용 라우트 (PDFVIEW)
 router.get('/pdfview', async (req, res) => {
@@ -132,8 +138,7 @@ router.get('/pdfview', async (req, res) => {
   });
 });
 
-
-// ✅ PDF view 에서 다운로드 버튼 클릭 시 PDF 생성
+// ✅ PDF view 에서 다운로드 버튼 클릭 시 PDFKIT 으로 PDF 생성
 router.get('/pdfdownload', async (req, res) => {
   const { filter_name } = req.query;
   const [vendors] = await db.query(
@@ -142,36 +147,22 @@ router.get('/pdfdownload', async (req, res) => {
       : 'SELECT * FROM import_vendor ORDER BY date DESC',
     filter_name ? [filter_name] : []
   );
-  const [names] = await db.query('SELECT DISTINCT v_name FROM import_vendor');
 
-  const html = await ejs.renderFile(path.resolve('views/admin/import/import_vendor_pdf.ejs'), {
-    vendors,
-    names,
-    filter_name
-  });
-
-  const browser = await puppeteer.launch({
-    executablePath: '/usr/bin/chromium-browser',
-    headless: 'new',
-    args: ['--no-sandbox', '--disable-setuid-sandbox']
-  });
-
-  const page = await browser.newPage();
-  await page.goto(`data:text/html;charset=utf-8,${html}`, {
-    waitUntil: 'networkidle0',
-  });
-
-  const pdfBuffer = await page.pdf({
-    format: 'letter',
-    landscape: true,
-    printBackground: true
-  });
-
-  await browser.close();
+  const doc = new PDFDocument({ margin: 30, size: 'LETTER', layout: 'landscape' });
 
   res.setHeader('Content-Type', 'application/pdf');
   res.setHeader('Content-Disposition', 'attachment; filename=vendor_list.pdf');
-  res.send(pdfBuffer);
+  doc.pipe(res);
+
+  doc.fontSize(16).text('Vendor List', { align: 'center' });
+  doc.moveDown();
+
+  doc.fontSize(10);
+  vendors.forEach(v => {
+    doc.text(`${v.date.toISOString().split('T')[0]} | ${v.v_name} | ${v.vd_rate}% | ${v.v_address1} ${v.v_address2} | ${v.v_phone} | ${v.v_email} | ${v.v_note || ''}`);
+  });
+
+  doc.end();
 });
 
 module.exports = router;
