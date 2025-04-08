@@ -7,17 +7,18 @@ const PDFDocument = require('pdfkit');
 router.get('/', async (req, res) => {
   const { filter_name } = req.query;
   const [vendors] = await db.query(
-    filter_name && filter_name !== '' 
-    ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
-    : 'SELECT * FROM import_vendor ORDER BY date DESC', 
+    filter_name && filter_name !== ''
+      ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
+      : 'SELECT * FROM import_vendor ORDER BY date DESC',
     filter_name ? [filter_name] : []
   );
   const [names] = await db.query('SELECT DISTINCT v_name FROM import_vendor');
-  res.render('admin/import/import_vendor', { 
+  res.render('admin/import/import_vendor', {
     title: 'Vender Management',
-    vendors, 
-    names, 
-    filter_name });
+    vendors,
+    names,
+    filter_name
+  });
 });
 
 // 등록
@@ -28,7 +29,7 @@ router.post('/add', async (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
     [date, v_name, vd_rate, v_address1, v_address2, v_phone, v_email, v_note]
   );
-  res.redirect('/');
+  res.redirect('/admin/import');
 });
 
 // 수정
