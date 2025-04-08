@@ -138,31 +138,5 @@ router.get('/pdfview', async (req, res) => {
   });
 });
 
-// ✅ PDF view 에서 다운로드 버튼 클릭 시 PDFKIT 으로 PDF 생성
-router.get('/pdfdownload', async (req, res) => {
-  const { filter_name } = req.query;
-  const [vendors] = await db.query(
-    filter_name && filter_name !== ''
-      ? 'SELECT * FROM import_vendor WHERE v_name = ? ORDER BY date DESC'
-      : 'SELECT * FROM import_vendor ORDER BY date DESC',
-    filter_name ? [filter_name] : []
-  );
-
-  const doc = new PDFDocument({ margin: 30, size: 'LETTER', layout: 'landscape' });
-
-  res.setHeader('Content-Type', 'application/pdf');
-  res.setHeader('Content-Disposition', 'attachment; filename=vendor_list.pdf');
-  doc.pipe(res);
-
-  doc.fontSize(16).text('Vendor List', { align: 'center' });
-  doc.moveDown();
-
-  doc.fontSize(10);
-  vendors.forEach(v => {
-    doc.text(`${v.date.toISOString().split('T')[0]} | ${v.v_name} | ${v.vd_rate}% | ${v.v_address1} ${v.v_address2} | ${v.v_phone} | ${v.v_email} | ${v.v_note || ''}`);
-  });
-
-  doc.end();
-});
 
 module.exports = router;
